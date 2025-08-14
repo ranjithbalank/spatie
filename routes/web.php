@@ -4,6 +4,8 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\MenuController;
+use App\Http\Controllers\MenuRolePermissionController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -24,6 +26,8 @@ Route::middleware('auth')->group(function () {
 
     Route::resource("roles", RoleController::class);
     Route::resource("permissions", PermissionController::class);
+    Route::resource('menus', MenuController::class);
+    Route::resource('menu-permission', MenuRolePermissionController::class);
 
 
 });
