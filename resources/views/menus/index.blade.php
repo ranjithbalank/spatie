@@ -53,7 +53,7 @@
                             </div>
 
                             <div class="w-24 flex justify-end items-center gap-2">
-                                <a href="{{ route('permissions.edit', $menu->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
+                                <a href="{{ route('menus.edit', $menu->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
                                 <form action="{{ route('roles.destroy', $menu->id) }}" method="POST" onsubmit="return confirm('Are you sure, do you really want to DELETE this ?');">
                                     @csrf
                                     @method('DELETE')

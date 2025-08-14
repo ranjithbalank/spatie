@@ -7,15 +7,19 @@ use Illuminate\Http\Request;
 
 class MenuController extends Controller
 {
-    public function index()
+    public function index(Request $request)
     {
-        $menus = Menu::with('children')
-                    ->whereNull('parent_id')
-                    ->orderBy('order')
-                    ->get();
+        $search = $request->input('search');
 
-        return view('menus.index', compact('menus'));
+        $menus = Menu::when($search, function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%");
+            })
+            ->orderBy('name')
+            ->get();
+
+        return view('menus.index', compact('menus', 'search'));
     }
+
 
 
     public function create()
@@ -38,5 +42,35 @@ class MenuController extends Controller
         Menu::create($request->all());
 
         return redirect()->route('menus.index')->with('success', 'Menu created successfully.');
+    }
+    public function edit(Menu $menu)
+    {
+        $parents = Menu::whereNull('parent_id')
+                        ->where('id', '!=', $menu->id) // prevent assigning itself as parent
+                        ->get();
+
+        return view('menus.edit', compact('menu', 'parents'));
+    }
+
+    public function update(Request $request, Menu $menu)
+    {
+        $request->validate([
+            'name' => 'required|string|max:255|unique:menus,name,' . $menu->id,
+            'icon' => 'nullable|string|max:255',
+            'url' => 'required|string|max:255',
+            'parent_id' => 'nullable|exists:menus,id',
+            'order' => 'nullable|integer',
+            'is_active' => 'boolean',
+        ]);
+
+        $menu->update($request->all());
+
+        return redirect()->route('menus.index')->with('success', 'Menu updated successfully.');
+    }
+
+    public function destroy(Menu $menu)
+    {
+        $menu->delete();
+        return redirect()->route('menus.index')->with('success', 'Menu deleted successfully.');
     }
 }

@@ -42,6 +42,20 @@
                     Menu Permissions
                 </a>
             </li>
+            <li>
+                <a
+                href="{{ route('units.index') }}"
+                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('users.*') ? 'bg-gray-200 font-semibold' : '' }}">
+                    Units
+                </a>
+            </li>
+            <li>
+                <a
+                 {{-- href="{{ route('departments.index') }}" --}}
+                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('departments.*') ? 'bg-gray-200 font-semibold' : '' }}">
+                    Departments
+                </a>
+            </li>
         @endrole
 
         <li>

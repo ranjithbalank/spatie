@@ -4,8 +4,10 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuRolePermissionController;
+use App\Http\Controllers\UnitController;
 
 Route::get('/', function () {
     return view('auth.login');
@@ -28,6 +30,8 @@ Route::middleware('auth')->group(function () {
     Route::resource("permissions", PermissionController::class);
     Route::resource('menus', MenuController::class);
     Route::resource('menu-permission', MenuRolePermissionController::class);
+    Route::resource("units",UnitController::class);
+    Route::resource('departments',DepartmentController::class);
 
 
 });
