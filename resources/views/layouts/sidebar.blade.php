@@ -37,12 +37,6 @@
                 </a>
             </li>
             <li>
-                <a href="{{ route('menu-permission.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('menu.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Menu Permissions
-                </a>
-            </li>
-            <li>
                 <a
                 href="{{ route('units.index') }}"
                     class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('users.*') ? 'bg-gray-200 font-semibold' : '' }}">
@@ -51,11 +45,18 @@
             </li>
             <li>
                 <a
-                 {{-- href="{{ route('departments.index') }}" --}}
+                 href="{{ route('departments.index') }}"
                     class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('departments.*') ? 'bg-gray-200 font-semibold' : '' }}">
                     Departments
                 </a>
             </li>
+            <li>
+                <a href="{{ route('menu-permission.index') }}"
+                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('menu.*') ? 'bg-gray-200 font-semibold' : '' }}">
+                    Menu Permissions
+                </a>
+            </li>
+
         @endrole
 
         <li>
