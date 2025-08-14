@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Admin;
 
 use Illuminate\Http\Request;
 use App\Http\Controllers\Controller;
+use Spatie\Permission\Models\Permission;
 use Illuminate\Container\Attributes\Auth;
 use Spatie\Permission\Models\Role;
 
@@ -17,7 +18,7 @@ class RoleController extends Controller
     {
         $search = $request->input('search');
 
-        $roles = Role::query()
+        $roles = Role::with('permissions')
             ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
             ->orderBy('name')
             ->get();
@@ -31,7 +32,13 @@ class RoleController extends Controller
      */
     public function create()
     {
-        return view('roles.create');
+        $permissions = Permission::all();
+        $menu = [
+        'users' => ['label' => 'Users', 'actions' => ['create','edit','delete','view','approve']],
+        'assets' => ['label' => 'Assets', 'actions' => ['create','edit','delete','view','approve']],
+        'leaves' => ['label' => 'Leaves', 'actions' => ['create','edit','delete','view','approve']],
+    ];
+        return view('roles.create',compact('permissions','menu'));
     }
 
     /**
@@ -44,7 +51,10 @@ class RoleController extends Controller
         ]);
 
         $role = Role::create(['name' => $request->input('name')]);
-
+        // Sync permissions if any
+        if ($request->has('permissions')) {
+            $role->syncPermissions($request->input('permissions'));
+        }
         return redirect()->route('roles.index')->with('success', 'Role created successfully.');
     }
 
@@ -63,6 +73,7 @@ class RoleController extends Controller
     {
         return view('roles.create', [
             'role' => Role::findOrFail($id),
+            "permissions" => Permission::all()
         ]);
     }
 
@@ -77,6 +88,10 @@ class RoleController extends Controller
         $role = Role::findOrFail($id);
         $role->name = $request->input('name');
         $role->save();
+
+         // Sync permissions
+        $role->syncPermissions($request->input('permissions', [])); // empty array if none checked
+
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');
     }
 

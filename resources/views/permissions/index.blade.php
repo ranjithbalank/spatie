@@ -19,7 +19,7 @@
             </a>
 
             <!-- Search bar -->
-            <form method="GET" action="{{ route('roles.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
+            <form method="GET" action="{{ route('permissions.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
                 <input
                     type="text"
                     name="search"
@@ -54,7 +54,7 @@
                             </div>
 
                             <div class="w-24 flex justify-end items-center gap-2">
-                                <a href="{{ route('roles.edit', $permission->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
+                                <a href="{{ route('permissions.edit', $permission->id) }}" class="text-blue-600 hover:underline text-sm">Edit</a>
                                 <form action="{{ route('roles.destroy', $permission->id) }}" method="POST" onsubmit="return confirm('Are you sure, do you really want to DELETE this ?');">
                                     @csrf
                                     @method('DELETE')

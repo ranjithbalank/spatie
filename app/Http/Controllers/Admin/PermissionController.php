@@ -12,9 +12,15 @@ class PermissionController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $permissions = Permission::all(); // Assuming you want to list roles here, adjust as necessary
+        $search = $request->input('search');
+
+        $permissions = Permission::query()
+            ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
+            ->orderBy('name')
+            ->get();
+
         return view('permissions.index',compact('permissions'));
     }
 
@@ -53,7 +59,9 @@ class PermissionController extends Controller
      */
     public function edit(string $id)
     {
-
+        return view('permissions.create', [
+            'permissions' => Permission::findOrFail($id)
+        ]);
     }
 
     /**
@@ -61,7 +69,14 @@ class PermissionController extends Controller
      */
     public function update(Request $request, string $id)
     {
-        //
+        $request->validate([
+            'name' => 'required|string|max:255|unique:permissions,name,' . $id,
+        ]);
+
+        $permission = Permission::findOrFail($id);
+        $permission->update(['name' => $request->name]);
+
+        return redirect()->route('permissions.index')->with('success', 'Permission updated successfully.');
     }
 
     /**

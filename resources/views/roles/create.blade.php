@@ -36,6 +36,23 @@
                     required />
             </div>
 
+            <!-- Permissions -->
+            <div class="mb-4">
+                <label class="form-label"><b>Assign Permissions</b></label>
+                <div class="d-flex flex-column">
+                    @foreach ($permissions as $permission)
+                        <div class="form-check form-switch mb-2">
+                            <input class="form-check-input" type="checkbox" name="permissions[]"
+                                value="{{ $permission->name }}" id="permission-{{ $permission->id }}"
+                                {{ isset($role) && $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
+                            <label class="form-check-label" for="permission-{{ $permission->id }}">
+                                {{ $permission->name }}
+                            </label>
+                        </div>
+                    @endforeach
+                </div>
+            </div>
+
             <!-- Submit Button -->
             <div class="flex justify-end">
                 <button type="submit"
