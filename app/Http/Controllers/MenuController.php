@@ -15,7 +15,7 @@ class MenuController extends Controller
                 $query->where('name', 'like', "%{$search}%");
             })
             ->orderBy('name')
-            ->get();
+            ->paginate(5);
 
         return view('menus.index', compact('menus', 'search'));
     }

@@ -46,12 +46,12 @@
                     Departments
                 </a>
             </li> --}}
-            <li>
+            {{-- <li>
                 <a href="{{ route('menu-permission.index') }}"
                     class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('menu-permission.*') ? 'bg-gray-200 font-semibold' : '' }}">
                     Menu Permissions
                 </a>
-            </li>
+            </li> --}}
         @endrole
 
         <!-- Dynamic Menus based on Role Permissions -->

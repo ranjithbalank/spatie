@@ -21,7 +21,7 @@ class RoleController extends Controller
         $roles = Role::with('permissions')
             ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
 
         return view('roles.index', compact('roles'));
     }

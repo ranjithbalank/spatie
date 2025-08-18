@@ -21,7 +21,7 @@ class UnitController extends Controller
                     ->orWhere('status', 'like', "%{$search}%");
             })
             ->orderBy('name')
-            ->get();
+            ->paginate(10);
 
         return view("units.index", compact("units", "search"));
     }
