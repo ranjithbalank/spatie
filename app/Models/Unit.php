@@ -13,4 +13,3 @@ class Unit extends Model
 
     public $timestamps = false; // if you don't have created_at/updated_at
 }
-

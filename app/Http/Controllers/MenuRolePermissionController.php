@@ -6,16 +6,17 @@ use App\Models\Menu;
 use Illuminate\Http\Request;
 use App\Models\MenuRolePermission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\Models\Permission;
 
-class MenuRolePermissionController extends Controller
+class MenuRolePermissionController extends Controller  // Make sure this extends Controller
 {
-     public function index(Request $request)
+
+    public function index(Request $request)
     {
         $roles = Role::all();
         $menus = Menu::orderBy('order')->get();
         $selectedRoleId = $request->role_id ?? $roles->first()->id;
 
-        // Existing permissions for selected role
         $permissions = MenuRolePermission::where('role_id', $selectedRoleId)
             ->get()
             ->groupBy('menu_id')
@@ -26,13 +27,6 @@ class MenuRolePermissionController extends Controller
         return view('menu_role_permissions.index', compact('roles', 'menus', 'selectedRoleId', 'permissions'));
     }
 
-    public function create()
-    {
-
-    }
-
-
-
     public function store(Request $request)
     {
         $request->validate([
@@ -41,18 +35,32 @@ class MenuRolePermissionController extends Controller
         ]);
 
         $roleId = $request->role_id;
+        $role = Role::findOrFail($roleId);
 
-        // Delete old permissions for this role
+        // Clear existing pivot
         MenuRolePermission::where('role_id', $roleId)->delete();
 
-        // Insert new permissions
         foreach ($request->permissions ?? [] as $menuId => $actions) {
+            $menu = Menu::find($menuId);
+
             foreach ($actions as $action) {
+                // Save to your pivot
                 MenuRolePermission::create([
                     'menu_id' => $menuId,
                     'role_id' => $roleId,
-                    'action' => $action,
+                    'action'  => $action,
                 ]);
+
+                // Generate permission name e.g. "create users"
+                $permissionName = strtolower($action . ' ' . $menu->name);
+
+                // Ensure permission exists in spatie_permissions table
+                $permission = Permission::firstOrCreate(['name' => $permissionName]);
+
+                // Assign this permission to the role
+                if (!$role->hasPermissionTo($permissionName)) {
+                    $role->givePermissionTo($permissionName);
+                }
             }
         }
 
@@ -60,35 +68,4 @@ class MenuRolePermissionController extends Controller
             ->with('success', 'Permissions updated successfully.');
     }
 
-    /**
-     * Display the specified resource.
-     */
-    public function show(string $id)
-    {
-        //
-    }
-
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit(string $id)
-    {
-        //
-    }
-
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, string $id)
-    {
-        //
-    }
-
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy(string $id)
-    {
-        //
-    }
 }

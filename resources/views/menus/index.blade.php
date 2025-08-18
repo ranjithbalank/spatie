@@ -13,10 +13,12 @@
         <!-- Top Controls: Create Button + Search -->
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <!-- Create Role Button -->
+
             <a href="{{ route('menus.create') }}"
                 class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
                 + Create Menu
             </a>
+
 
             <!-- Search bar -->
             <form method="GET" action="{{ route('menus.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">

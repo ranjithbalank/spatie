@@ -19,10 +19,11 @@ class PermissionController extends Controller
         $permissions = Permission::query()
             ->when($search, fn($query) => $query->where('name', 'like', "%{$search}%"))
             ->orderBy('name')
-            ->get();
+            ->paginate(10); // ✅ paginate instead of get()
 
-        return view('permissions.index',compact('permissions'));
-    }
+        return view('permissions.index', compact('permissions', 'search'));
+}
+
 
     /**
      * Show the form for creating a new resource.

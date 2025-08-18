@@ -37,12 +37,13 @@
             </div>
 
             <!-- Permissions -->
+            <!-- Permissions -->
             <div class="mb-4">
                 <label class="form-label"><b>Assign Permissions</b></label>
-                <div class="d-flex flex-column">
+                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-2">
                     @if (!empty($permissions) && count($permissions) > 0)
                         @foreach ($permissions as $permission)
-                            <div class="form-check form-switch mb-2">
+                            <div class="flex items-center space-x-2">
                                 <input class="form-check-input" type="checkbox" name="permissions[]"
                                     value="{{ $permission->name }}" id="permission-{{ $permission->id }}"
                                     {{ isset($role) && $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
@@ -54,9 +55,9 @@
                     @else
                         <p>No Permissions Created</p>
                     @endif
-
                 </div>
             </div>
+
 
             <!-- Submit Button -->
             <div class="flex justify-end">

@@ -13,10 +13,7 @@
         <!-- Top Controls: Create Button + Search -->
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <!-- Create Role Button -->
-            {{-- <a href="{{ route('menus.create') }}"
-                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                + Create Menu
-            </a> --}}
+
 
             <!-- Search bar -->
             {{-- <form method="GET" action="{{ route('menus.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
@@ -28,32 +25,48 @@
             </form> --}}
         </div>
 
-        @if (session('success'))
+        {{-- @if (session('success'))
             <div class="mb-4 text-green-600">
                 {{ session('success') }}
             </div>
-        @endif
+        @endif --}}
 
         <form action="{{ route('menu-permission.index') }}" method="GET" class="mb-4">
-            <label for="role_id">Select Role:</label>
-            <select name="role_id" id="role_id" onchange="this.form.submit()" class="border rounded p-1 w-25">
-                @foreach ($roles as $role)
-                    <option value="{{ $role->id }}" {{ $selectedRoleId == $role->id ? 'selected' : '' }}>
-                        {{ $role->name }}
-                    </option>
-                @endforeach
-            </select>
+
+
+            <div class="flex items-center w-full mb-4 gap-4">
+                <!-- Role Selection -->
+                <div class="flex items-center gap-2 flex-grow">
+                    <label for="role_id" class="whitespace-nowrap text-danger fw-bold">Select Role:</label>
+                    <select name="role_id" id="role_id" onchange="this.form.submit()"
+                        class="border rounded px-3 py-1.5 focus:outline-none focus:ring-1 focus:ring-blue-500 w-25">
+                        @foreach ($roles as $role)
+                            <option value="{{ $role->id }}" {{ $selectedRoleId == $role->id ? 'selected' : '' }}>
+                                {{ ucfirst($role->name) }}
+                            </option>
+                        @endforeach
+                    </select>
+                </div>
+
+                <!-- Create Menu Button -->
+                <a href="{{ route('menus.create') }}"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition whitespace-nowrap flex items-center gap-1">
+                    Create Menu
+                </a>
+            </div>
+
         </form>
+
 
         <form action="{{ route('menu-permission.store') }}" method="POST">
             @csrf
             <input type="hidden" name="role_id" value="{{ $selectedRoleId }}">
 
-            <table class="min-w-full border border-gray-300">
+            <table class="min-w- border border-gray-300">
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="border px-4 py-2 text-left">Menu</th>
-                        @foreach (['view', 'create', 'edit', 'delete', 'approve'] as $action)
+                        @foreach (['create','edit','view','delete','approve'] as $action)
                             <th class="border px-4 py-2 text-center capitalize">{{ $action }}</th>
                         @endforeach
                     </tr>
@@ -62,7 +75,7 @@
                     @foreach ($menus as $menu)
                         <tr>
                             <td class="border px-4 py-2 font-bold">{{ $menu->name }}</td>
-                            @foreach (['view', 'create', 'edit', 'delete', 'approve'] as $action)
+                            @foreach (['create','edit','view','delete','approve'] as $action)
                                 <td class="border px-4 py-2 text-center">
                                     <input type="checkbox" name="permissions[{{ $menu->id }}][]"
                                         value="{{ $action }}"
