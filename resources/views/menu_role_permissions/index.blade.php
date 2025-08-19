@@ -66,7 +66,7 @@
                 <thead class="bg-gray-100">
                     <tr>
                         <th class="border px-4 py-2 text-left">Menu</th>
-                        @foreach (['create','edit','view','delete','approve'] as $action)
+                        @foreach (['view','create','edit','delete','approve'] as $action)
                             <th class="border px-4 py-2 text-center capitalize">{{ $action }}</th>
                         @endforeach
                     </tr>
@@ -75,7 +75,7 @@
                     @foreach ($menus as $menu)
                         <tr>
                             <td class="border px-4 py-2 font-bold">{{ $menu->name }}</td>
-                            @foreach (['create','edit','view','delete','approve'] as $action)
+                            @foreach (['view','create','edit','delete','approve'] as $action)
                                 <td class="border px-4 py-2 text-center">
                                     <input type="checkbox" name="permissions[{{ $menu->id }}][]"
                                         value="{{ $action }}"

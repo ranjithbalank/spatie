@@ -5,6 +5,7 @@ use App\Http\Controllers\ProfileController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\DepartmentController;
+
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\MenuRolePermissionController;
 use App\Http\Controllers\UnitController;
@@ -34,6 +35,7 @@ Route::middleware('auth')->group(function () {
     Route::resource("units",UnitController::class);
     Route::resource('departments',DepartmentController::class);
     Route::resource("users",UserController::class);
+    // Route::resource("employees",EmployeeController::class);
 
 });
 

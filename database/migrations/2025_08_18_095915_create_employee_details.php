@@ -13,18 +13,35 @@ return new class extends Migration
     {
         Schema::create('employee_details', function (Blueprint $table) {
             $table->id();
-            $table->string('emp_id');
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('emp_id')->unique();
             $table->string('emp_name');
-            $table->string('unit_id');
-            $table->string("department_id");
+            $table->enum('gender', ['male', 'female', 'other']);
+            $table->unsignedBigInteger('unit_id');
+            $table->unsignedBigInteger('department_id');
             $table->date('dob');
             $table->date('doj');
-            $table->string('shift_type');
-            $table->string('manager_id');
+            $table->date('dor')->nullable();
+            $table->enum('shift_type', ["general","shift"])->nullable();
+            $table->unsignedBigInteger('manager_id')->nullable();
             $table->string('designation');
-
-
+            $table->enum('status', ['active',"inactive"])->default('active');
             $table->timestamps();
+            $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
+        });
+
+        // Add foreign key constraints in a separate schema operation
+        Schema::table('employee_details', function (Blueprint $table) {
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('unit_id')->references('id')->on('units');
+            $table->foreign('department_id')->references('id')->on('departments');
+            $table->foreign('manager_id')->references('id')->on('employee_details');
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->foreign('deleted_by')->references('id')->on('users');
         });
     }
 

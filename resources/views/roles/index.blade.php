@@ -38,7 +38,12 @@
                         <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                             <span class="flex-1">Role Name</span>
                             {{-- <span class="flex-1">Permission</span> --}}
-                            <span class="w-24 text-right">Actions</span>
+                            @canany(['edit roles','delete roles'])
+                                <span class="w-24 text-right">Actions</span>
+                            @endcanany(['edit roles' 'delete roles'])
+
+
+
                         </li>
 
                         @foreach ($roles as $role)
@@ -65,13 +70,16 @@
                                         <a href="{{ route('roles.edit', $role->id) }}"
                                             class="text-blue-600 hover:underline text-s">Edit</a>
                                     @endcan
-                                    <form action="{{ route('roles.destroy', $role->id) }}" method="POST"
+                                    @can('delete roles')
+                                        <form action="{{ route('roles.destroy', $role->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure, do you really want to DELETE this ?');">
                                         @csrf
                                         @method('DELETE')
                                         <button type="submit"
                                             class="text-red-600 hover:underline text-s">Delete</button>
                                     </form>
+                                    @endcan
+
                                 </div>
                             </li>
                         @endforeach
