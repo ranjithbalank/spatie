@@ -2,11 +2,12 @@
 
 namespace App\Http\Controllers\Admin;
 
+use App\Models\User;
 use Illuminate\Http\Request;
+use Spatie\Permission\Models\Role;
 use App\Http\Controllers\Controller;
 use Spatie\Permission\Models\Permission;
 use Illuminate\Container\Attributes\Auth;
-use Spatie\Permission\Models\Role;
 
 class RoleController extends Controller
 {
@@ -100,9 +101,19 @@ class RoleController extends Controller
      */
     public function destroy(string $id)
     {
+        // Find the role you want to delete
         $role = Role::findOrFail($id);
+
+        // This is the crucial fix: Find all users with this role and set their role_id to null
+        User::where('role_id', $role->id)->update(['role_id' => null]);
+
+        // Now, safely detach users from the Spatie's intermediate table.
+        $role->users()->detach();
+
+        // Now you can safely delete the role itself.
         $role->delete();
 
+        // Redirect with a success message
         return redirect()->route('roles.index')->with('success', 'Role deleted successfully.');
     }
 }

@@ -56,14 +56,6 @@
                                     <p class="text-sm font-medium text-gray-900 truncate">
                                         {{ Str::ucfirst($role->name) }}</p>
                                 </div>
-                                <!-- Permissions -->
-                                {{-- <div class="flex-1 flex flex-wrap gap-1 items-center">
-                                    @foreach ($role->permissions as $perm)
-                                        <span class="bg-indigo-100 text-indigo-800 text-xs px-2 py-1 rounded">
-                                            {{ $perm->name }}
-                                        </span>
-                                    @endforeach
-                                </div> --}}
 
                                 <div class="w-24 flex justify-end items-center gap-2">
                                     @can('edit roles')
