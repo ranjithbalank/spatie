@@ -13,11 +13,12 @@
         <!-- Top Controls: Create Button + Search -->
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <!-- Create Role Button -->
-            <a href="{{ route('permissions.create') }}"
-                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                + Create Pernission
-            </a>
-
+            @can('create permissions')
+                <a href="{{ route('permissions.create') }}"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                    + Create Pernission
+                </a>
+            @endcan
             <!-- Search bar -->
             <form method="GET" action="{{ route('permissions.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
                 <input type="text" name="search" placeholder="Search permissions..." value="{{ request('search') }}"
@@ -36,7 +37,10 @@
                         <!-- Header Row -->
                         <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                             <span class="flex-1">Permissions Name</span>
-                            <span class="w-24 text-right">Actions</span>
+                            @canany(["edit permissions","delete permissions"])
+                               <span class="w-24 text-right">Actions</span>
+                            @endcanany(["edit permissions" "delete permissions"])
+
                         </li>
 
                         @foreach ($permissions as $permission)
@@ -51,8 +55,11 @@
                                 </div>
 
                                 <div class="w-24 flex justify-end items-center gap-2">
-                                    <a href="{{ route('permissions.edit', $permission->id) }}"
-                                        class="text-blue-600 hover:underline text-sm">Edit</a>
+                                    @can('edit permissions')
+                                        <a href="{{ route('permissions.edit', $permission->id) }}"
+                                            class="text-blue-600 hover:underline text-sm">Edit</a>
+                                    @endcan
+                                    @can("delete permissions")
                                     <form action="{{ route('roles.destroy', $permission->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure, do you really want to DELETE this ?');">
                                         @csrf
@@ -60,6 +67,7 @@
                                         <button type="submit"
                                             class="text-red-600 hover:underline text-sm">Delete</button>
                                     </form>
+                                    @endcan
                                 </div>
                             </li>
                         @endforeach

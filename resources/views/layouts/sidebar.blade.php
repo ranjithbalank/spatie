@@ -1,9 +1,5 @@
 <!-- resources/views/layouts/sidebar.blade.php -->
 
-<div class="p-4 border-b">
-    <h2 class="text-lg font-bold">Menu</h2>
-</div>
-
 <nav class="p-4">
     <ul class="space-y-2">
         <!-- Dashboard -->
