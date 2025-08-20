@@ -45,7 +45,7 @@
                 </div>
 
                 <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
+                    {{-- <div class="p-6 text-gray-900"> --}}
                         <ul role="list" class="divide-y divide-gray-200">
                             <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                                 <span class="flex-1">User Name</span>

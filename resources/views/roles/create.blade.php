@@ -2,15 +2,14 @@
     <x-slot name="header">
         <div class="flex justify-between items-center w-full mb-4">
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
-                {{ isset($role) ? 'Edit Role' : 'Create Role' }}
+                Role and Permission Management
             </h2>
-
-            <a href="{{ route('roles.index') }}" class="text-sm text-red-700 no-underline">
-                &larr; {{ __('Back') }}
-            </a>
         </div>
-        <hr class="mb-4">
-
+        {{-- <hr class=""> --}}
+    </x-slot>
+@section('content')
+    <!-- The form is now a standard form and not a modal -->
+    <div class="w-full mx-auto my-auto bg-white rounded-lg shadow-xl overflow-hidden p-6">
         @if ($errors->any())
             <div class="mb-4 bg-red-100 border border-red-400 text-red-700 px-4 py-3 rounded">
                 <ul class="list-disc list-inside">
@@ -32,32 +31,64 @@
                 <label for="name" class="block text-sm font-medium text-gray-700"><b>Role Name</b></label>
                 <input type="text" name="name" id="name" value="{{ old('name', $role->name ?? '') }}"
                     placeholder="Enter role name"
-                    class="mt-2 block w-full px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 w-25"
+                    class="mt-2 block w-25 px-4 py-2 border border-gray-300 rounded-lg shadow-sm focus:outline-none focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500"
                     required />
             </div>
 
-            <!-- Permissions -->
-            <!-- Permissions -->
+            <!-- Permissions with Dynamic Accordion -->
             <div class="mb-4">
                 <label class="form-label"><b>Assign Permissions</b></label>
-                <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4 mt-2">
-                    @if (!empty($permissions) && count($permissions) > 0)
-                        @foreach ($permissions as $permission)
-                            <div class="flex items-center space-x-2">
-                                <input class="form-check-input" type="checkbox" name="permissions[]"
-                                    value="{{ $permission->name }}" id="permission-{{ $permission->id }}"
-                                    {{ isset($role) && $role->hasPermissionTo($permission->name) ? 'checked' : '' }}>
-                                <label class="form-check-label" for="permission-{{ $permission->id }}">
-                                    {{ ucfirst($permission->name) }}
-                                </label>
+                {{-- Updated container to use a grid for the permission groups --}}
+                <div id="permissions-accordion" class="mt-2 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+                    @php
+                        // Group permissions by a custom logic.
+                        $groupedPermissions = $permissions->groupBy(function($item) {
+                            $name = strtolower($item->name);
+                            if (str_contains($name, 'my profile')) {
+                                return 'my profile';
+                            }
+                            if (str_contains($name, 'menu items')) {
+                                return 'menu items';
+                            }
+                            // Simplified checks for menu-related permissions
+                            if (str_contains($name, 'menu authorization')) {
+                                return 'menu authorization';
+                            }
+                            if (str_contains($name, 'menu items')) {
+                                return 'menu items';
+                            }
+                            if (str_contains($name, 'roles & permissions')) {
+                                return 'roles & permissions';
+                            }
+                            $parts = explode(' ', $name);
+                            return isset($parts[1]) ? $parts[1] : 'other';
+                        });
+                    @endphp
+
+                    @foreach ($groupedPermissions as $groupName => $groupPermissions)
+                        <div class="bg-red-50 rounded-lg shadow-sm">
+                            {{-- This div now acts as a static header, not a toggle --}}
+                            <div class="flex justify-start items-center w-full p-4 text-left font-semibold text-gray-700 rounded-lg">
+                                Menu :&nbsp;<span class="group-title text-danger">{{ ucwords($groupName) }}</span>
                             </div>
-                        @endforeach
-                    @else
-                        <p>No Permissions Created</p>
-                    @endif
+
+                            <!-- The content div is now always visible -->
+                            <div class="permission-group grid grid-cols-1 gap-4 p-4 border-t border-gray-200">
+                                @foreach ($groupPermissions as $permission)
+                                    <div class="flex items-center">
+                                        <input type="checkbox" name="permissions[]" value="{{ $permission->name }}" id="permission-{{ $permission->id }}"
+                                            class="permission-checkbox form-checkbox text-indigo-600 rounded-sm focus:ring-indigo-500 h-4 w-4"
+                                            {{ (isset($role) && $role->hasPermissionTo($permission->name)) ? 'checked' : '' }}>
+                                        <label for="permission-{{ $permission->id }}" class="ml-2 text-sm text-gray-700 cursor-pointer">
+                                            {{ ucwords(str_replace('-', ' ', $permission->name)) }}
+                                        </label>
+                                    </div>
+                                @endforeach
+                            </div>
+                        </div>
+                    @endforeach
                 </div>
             </div>
-
 
             <!-- Submit Button -->
             <div class="flex justify-end">
@@ -67,8 +98,6 @@
                 </button>
             </div>
         </form>
-        </div>
-
-        </div>
-    </x-slot>
+    </div>
+    @endsection
 </x-app-layout>
