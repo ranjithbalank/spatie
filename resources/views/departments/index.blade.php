@@ -14,10 +14,13 @@
 
         <!-- Top Controls: Create Button + Search -->
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-            <a href="{{ route('departments.create') }}"
-                class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                + Create Department
-            </a>
+            @can('create departments')
+                <a href="{{ route('departments.create') }}"
+                    class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                    + Create Department
+                </a>
+            @endcan
+
 
             <form method="GET" action="{{ route('departments.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
                 <input type="text" name="search" placeholder="Search Menu Items..." value="{{ request('search') }}"
@@ -36,7 +39,10 @@
                         <!-- Header Row -->
                         <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                             <span class="flex-1">Department Name</span>
-                            <span class="w-24 text-right">Actions</span>
+                            @canany(['edit departments', 'delete departments'])
+                                <span class="w-24 text-right">Actions</span>
+                            @endcanany(["edit departments" ,"delete departments"])
+
                         </li>
 
                         @forelse ($departments as $department)
@@ -60,8 +66,11 @@
                                 </div>
 
                                 <div class="w-24 flex justify-end items-center gap-2">
-                                    <a href="{{ route('departments.edit', $department->id) }}"
-                                        class="text-blue-600 hover:underline text-sm">Edit</a>
+                                    @can('edit departments')
+                                        <a href="{{ route('departments.edit', $department->id) }}"
+                                            class="text-blue-600 hover:underline text-sm">Edit</a>
+                                    @endcan
+                                    @can("delete departments")
                                     <form action="{{ route('departments.destroy', $department->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure you want to delete this department?');">
                                         @csrf
@@ -69,6 +78,7 @@
                                         <button type="submit"
                                             class="text-red-600 hover:underline text-sm">Delete</button>
                                     </form>
+                                    @endcan
                                 </div>
                             </li>
                         @empty
