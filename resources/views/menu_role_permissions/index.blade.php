@@ -72,6 +72,7 @@
                     </tr>
                 </thead>
                 <tbody>
+                    @if($menus->is_active = 1)
                     @foreach ($menus as $menu)
                         <tr>
                             <td class="border px-4 py-2 font-bold">{{ $menu->name }}</td>
@@ -84,6 +85,7 @@
                             @endforeach
                         </tr>
                     @endforeach
+                    @endif
                 </tbody>
             </table>
 

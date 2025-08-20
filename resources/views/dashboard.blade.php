@@ -8,8 +8,10 @@
     <div class="py-12">
         <div class="max-w-7xl mx-auto sm:px-6 lg:px-8">
             <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                <div class="p-6 text-red-900">
-                    Hello!  <span class="text-danger"> <b>{{Auth::user()->name }}</b></span>, <br>welcome to your <b>MyDMW dashboard!<b><br>
+                <div class="p-6 text-red-900 display-6">
+                    Hello!  <span class="text-danger"> <b>{{Auth::user()->name }}😎</b>,</span>
+                    <br><br>Welcome to your <b>MyDMW dashboard!<b>
+                        <br><br>
                     {{ __("You have Successfully logged in!") }}
                 </div>
             </div>

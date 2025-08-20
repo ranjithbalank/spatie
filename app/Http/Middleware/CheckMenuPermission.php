@@ -13,11 +13,11 @@ class CheckMenuPermission
     protected $actionMap = [
         'index' => 'view',
         'show' => 'view',
-        'create' => 'create',
-        'store' => 'create',
-        'edit' => 'edit',
-        'update' => 'edit',
-        'destroy' => 'delete',
+        // 'create' => 'create',
+        // 'store' => 'create',
+        // 'edit' => 'edit',
+        // 'update' => 'edit',
+        // 'destroy' => 'delete',
     ];
 
     public function handle(Request $request, Closure $next, $action = null)

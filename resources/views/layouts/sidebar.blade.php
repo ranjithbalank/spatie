@@ -68,7 +68,8 @@
 
             $menus = Menu::whereIn('id', $allowedMenuIds)
                 ->whereNull('parent_id')
-                ->orderBy('order')
+                ->orderBy('order','asc')
+                ->orderBy('name')
                 ->with([
                     'children' => function ($query) use ($allowedMenuIds) {
                         $query->whereIn('id', $allowedMenuIds)->orderBy('order');

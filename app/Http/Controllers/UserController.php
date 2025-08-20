@@ -13,11 +13,31 @@ class UserController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $users = User::all();
-        return view('users.index',compact('users'));
+        $search = $request->input('search');
+        $filterRoleId = $request->input('role_id');
+
+        $users = User::with('roles') // Eager load the roles relationship
+            ->when($search, function ($query, $search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('status', 'like', "%{$search}%");
+            })
+            ->when($filterRoleId, function ($query, $filterRoleId) {
+                // Filter by role ID using the whereHas method on the 'roles' relationship
+                $query->whereHas('roles', function ($q) use ($filterRoleId) {
+                    $q->where('id', $filterRoleId);
+                });
+            })
+            ->orderBy('name')
+            ->paginate(10);
+
+        // Fetch all roles to populate the filter dropdown in your view
+        $roles = Role::orderBy('name')->get();
+
+        return view("users.index", compact("users", "search", "roles", "filterRoleId"));
     }
+
 
     /**
      * Show the form for creating a new resource.

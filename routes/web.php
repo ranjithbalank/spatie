@@ -1,29 +1,33 @@
 <?php
 
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\ProfileController;
-use App\Http\Controllers\Admin\RoleController;
-use App\Http\Controllers\Admin\PermissionController;
-use App\Http\Controllers\DepartmentController;
-
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\MenuRolePermissionController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\DashboardController; // <-- Make sure to import your controller
+
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\Admin\RoleController;
+use App\Http\Controllers\DepartmentController;
+use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\MenuRolePermissionController;
 
 Route::get('/', function () {
-    return view('auth.login');
+    return redirect()->route('login');
 });
 
-Route::get('/dashboard', function () {
-    return view('dashboard');
-})->middleware(['auth', 'verified'])->name('dashboard');
+// We apply the 'auth', 'verified', and our new 'check.status' middleware here
+Route::middleware(['auth', 'verified', 'check.status'])->group(function () {
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+});
+
 
 Route::get('/admin', function () {
     return view('admin.index');
 })->middleware(['auth', 'role:admin'])->name('admin.index');
 
-Route::middleware('auth')->group(function () {
+Route::middleware('auth','menu')->group(function () {
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -36,9 +40,7 @@ Route::middleware('auth')->group(function () {
     Route::resource('departments',DepartmentController::class);
     Route::resource("users",UserController::class);
     // Route::resource("employees",EmployeeController::class);
-
 });
-
 
 
 require __DIR__.'/auth.php';
