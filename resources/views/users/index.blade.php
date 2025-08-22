@@ -64,9 +64,13 @@
                             <div>
                                 <p class="text-m font-medium text-red-900 truncate">
                                     {{ Str::ucfirst($user->name) }}
+
                                 </p>
+
                                 <p class="text-sm text-gray-500">
-                                    Employee id:<span class="text-red-600"> {{  $employee[0]->emp_id }} </span>|
+                                    @foreach ($user->employees ?? [] as $emp)
+                                        Employee ID: <span class="text-red-600">{{ $emp->emp_id }} | </span>
+                                    @endforeach
                                     Status:
                                     @if ($user->status === 'active')
                                         <span class="text-green-600 font-bold">{{ ucfirst($user->status) }}</span>
