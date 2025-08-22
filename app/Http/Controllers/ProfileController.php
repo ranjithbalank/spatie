@@ -43,7 +43,7 @@ class ProfileController extends Controller
 
         if ($employee) {
             // Update the employee's name and any other relevant fields.
-            $employee->employee_name = $request->validated('name');
+            $employee->emp_name = $request->validated('name');
             $employee->updated_by = $user->id;
             $employee->save();
         }

@@ -137,8 +137,15 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-    public function destroy(string $id)
+   public function destroy(string $id)
     {
-        //
+        // delete dependent details
+        \App\Models\Employees::where('emp_id', $id)->delete();
+
+        // delete employee
+        \App\Models\User::where('id', $id)->delete();
+
+        return back()->with('success', 'Employee deleted successfully.');
     }
+
 }
