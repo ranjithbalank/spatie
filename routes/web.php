@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\MenuRolePermissionController;
 use App\Http\Controllers\DashboardController; // <-- Make sure to import your controller
 use App\Http\Controllers\EmployeeController;
+use App\Http\Controllers\LeaveController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -43,6 +44,7 @@ Route::middleware('auth')->group(function () {
     Route::resource("users",UserController::class);
     Route::resource("designations",DesignationController::class);
     Route::resource('employees',EmployeeController::class);
+    Route::resource('leaves',LeaveController::class);
 });
 
 

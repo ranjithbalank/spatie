@@ -80,7 +80,7 @@
                         <option value="">Select Manager</option>
                         @foreach ($employees as $emp)
                             <option value="{{ $emp->emp_id }}"
-                                {{ old('manager_id', $employee->manager_id) == $emp->emp_id ? 'selected' : '' }}>
+                                {{ old('manager_id', $emp->manager_id) == $emp->emp_id ? 'selected' : '' }}>
                                 {{ $emp->emp_name }} ({{ $emp->emp_id }})
                             </option>
                         @endforeach

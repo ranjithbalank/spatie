@@ -9,8 +9,10 @@ class LeaveController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request )
     {
+        $search = $request->input('search');
+
         return view("leaves.index");
     }
 
