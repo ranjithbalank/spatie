@@ -11,7 +11,7 @@
         </div>
         <hr class="mb-4">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-            @can('create employee details')
+            @can('create employees')
                 <a href="{{ route('employees.create') }}"
                     class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
                     + Create Employees
@@ -33,7 +33,7 @@
                     <ul role="list" class="divide-y divide-gray-200">
                         <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                             <span class="flex-1">Employee Details</span>
-                            @canany(['edit employee details', 'delete employee details'])
+                            @canany(['edit employees', 'delete employees'])
                                 <span class="w-24 text-right">Actions</span>
                             @endcanany
                         </li>
@@ -42,11 +42,11 @@
                                 <div class="flex-1 flex items-center gap-x-4">
                                     <div
                                         class="h-10 w-10 flex-none rounded-full bg-gray-200 flex items-center justify-center text-gray-700 font-semibold">
-                                        {{ strtoupper(substr($employee->employee_name, 0, 1)) }}
+                                        {{ strtoupper(substr($employee->emp_name, 0, 1)) }}
                                     </div>
                                     <div class="flex-1">
                                         <p class="text-sm font-medium text-gray-900 truncate">
-                                            {{ Str::ucfirst($employee->employee_name) }}
+                                            {{ Str::ucfirst($employee->emp_name) }}
                                         </p>
                                         {{-- <p class="text-xs text-gray-500">
                                             Emp ID: {{ $employee->emp_id }} |
@@ -63,11 +63,11 @@
                                     </div>
                                 </div>
                                 <div class="w-24 flex justify-end items-center gap-2">
-                                    @can('edit employee details')
+                                    @can('edit employees')
                                         <a href="{{ route('employees.edit', $employee->id) }}"
                                             class="text-blue-600 hover:underline text-sm">Edit</a>
                                     @endcan
-                                    @can('delete employee details')
+                                    @can('delete employees')
                                         <form action="{{ route('employees.destroy', $employee->id) }}" method="POST"
                                             onsubmit="return confirm('Are you sure you want to delete this employee?');">
                                             @csrf

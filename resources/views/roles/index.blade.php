@@ -12,7 +12,7 @@
         <hr class="mb-4">
         <!-- Top Controls: Create Button + Search -->
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-            @can('create roles & permissions')
+            @can('create roles')
                 <!-- Create Role Button -->
                 <a href="{{ route('roles.create') }}"
                     class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
@@ -38,7 +38,7 @@
                         <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                             <span class="flex-1">Role Name</span>
                             {{-- <span class="flex-1">Permission</span> --}}
-                            @canany(['edit roles & permissions','delete roles & permissions'])
+                            @canany(['edit roles','delete roles'])
                                 <span class="w-24 text-right">Actions</span>
                             @endcanany(['edit roles & permissions' 'delete roles & permissions'])
 
@@ -58,11 +58,11 @@
                                 </div>
 
                                 <div class="w-24 flex justify-end items-center gap-2">
-                                    @can('edit roles & permissions')
+                                    @can('edit roles')
                                         <a href="{{ route('roles.edit', $role->id) }}"
                                             class="text-blue-600 hover:underline text-s">Edit</a>
                                     @endcan
-                                    @can('delete roles & permissions')
+                                    @can('delete roles')
                                         <form action="{{ route('roles.destroy', $role->id) }}" method="POST"
                                         onsubmit="return confirm('Are you sure, do you really want to DELETE this ?');">
                                         @csrf

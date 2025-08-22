@@ -13,30 +13,42 @@ return new class extends Migration
     {
         Schema::create('employees_details', function (Blueprint $table) {
             $table->id();
-            $table->foreignId("user_id")->constrained("users");
-            $table->foreignId("unit_id")->constrained("units");
-            $table->foreignId("department_id")->constrained("departments");
-            $table->foreignId("designation_id")->constrained("designations");
-            $table->unsignedBigInteger("emp_id")->unique();
-            $table->string('employee_name');
-            $table->date("doj");
-            $table->date("dor")->nullable();
-            $table->unsignedBigInteger("manager_id")->nullable(); // Made nullable
-            $table->float("leave_balance")->nullable();
-            $table->datetime("last_login_at")->nullable();
-            $table->datetime("last_logout_at")->nullable();
-            $table->string("status");
-            $table->string("created_by");
-            $table->string("updated_by");
+            $table->unsignedBigInteger('user_id')->nullable();
+            $table->string('emp_id')->unique();
+            $table->string('emp_name');
+            $table->enum('gender', ['male', 'female', 'other']);
+            $table->unsignedBigInteger('unit_id');
+            $table->unsignedBigInteger('department_id');
+            $table->date('dob');
+            $table->date('doj');
+            $table->date('dor')->nullable();
+            $table->enum('shift_type', ["general","shift"])->nullable();
+            $table->string('manager_id')->nullable();
+
+            // FIX: designation_id must be an unsignedBigInteger to match the 'id' column on the designations table
+            $table->unsignedBigInteger('designation_id')->nullable();
+
+            $table->enum('status', ['active',"inactive"])->default('active');
             $table->timestamps();
+            $table->softDeletes();
+            $table->unsignedBigInteger('created_by')->nullable();
+            $table->unsignedBigInteger('updated_by')->nullable();
+            $table->unsignedBigInteger('deleted_by')->nullable();
         });
 
-        // Add the foreign key constraint AFTER the table is created
+        // All foreign key constraints can be defined in a separate schema operation
         Schema::table('employees_details', function (Blueprint $table) {
-            $table->foreign("manager_id")
-                  ->references("emp_id")
-                  ->on("employees_details")
-                  ->onDelete('set null'); // Added onDelete for better data integrity
+            $table->foreign('user_id')->references('id')->on('users')->onDelete('set null');
+            $table->foreign('unit_id')->references('id')->on('units');
+            $table->foreign('department_id')->references('id')->on('departments');
+
+            // This is the new corrected foreign key
+            $table->foreign('designation_id')->references('id')->on('designations');
+
+            $table->foreign('manager_id')->references('emp_id')->on('employees_details');
+            $table->foreign('created_by')->references('id')->on('users');
+            $table->foreign('updated_by')->references('id')->on('users');
+            $table->foreign('deleted_by')->references('id')->on('users');
         });
     }
 
@@ -45,10 +57,6 @@ return new class extends Migration
      */
     public function down(): void
     {
-        Schema::table('employees_details', function (Blueprint $table) {
-            $table->dropForeign(['manager_id']); // Drop the foreign key first
-        });
-
-        Schema::dropIfExists('employees_details');
+        Schema::dropIfExists('employee_details');
     }
 };

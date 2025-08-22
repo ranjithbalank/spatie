@@ -73,7 +73,7 @@ class UserController extends Controller
     $role = Role::findById($validated['role']);
     $user->assignRole($role->name);
     Employees::updateOrCreate(
-            ['employee_name' => $validated['name']]);
+            ['emp_name' => $validated['name']]);
     // Redirect to the users list with a success message
     return redirect()->route('users.index')->with('success', 'User created successfully!');
 }
@@ -129,7 +129,7 @@ class UserController extends Controller
         $user->syncRoles($role->name);
         Employees::updateOrCreate(
             ['user_id' => $user->id],
-            ['employee_name' => $validated['name']]);
+            ['emp_name' => $validated['name']]);
         // Redirect to the users list with a success message
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }

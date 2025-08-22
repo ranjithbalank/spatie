@@ -10,13 +10,14 @@ class Employees extends Model
     protected $table = 'employees_details';
        protected $fillable = [
         'emp_id',
-        'employee_name',
+        'emp_name',
         'manager_id',
         'unit_id',
         'department_id',
         'designation_id',
         'doj',
         'dor',
+        'dob',
         'leave_balance',
         'status',
         'user_id',

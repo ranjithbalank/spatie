@@ -54,19 +54,24 @@ class EmployeeController extends Controller
      */
 
 
-public function store(Request $request)
+    public function store(Request $request)
     {
-        // 1. Validate the incoming request data with the correct table name
+        // dd($request->all());
+        // 1. Validate the incoming request data
         $validated_data = $request->validate([
             "emp_id" => "required|string|max:255|unique:employees_details,emp_id",
-            "employee_name" => "required|string|max:255",
-            "manager_id" => "nullable|integer|exists:employees_details,id",
+            "emp_name" => "required|string|max:255",
+
+            // FIX: The validation rule for manager_id must reference the 'emp_id' column, not 'id'.
+            "manager_id" => "nullable|string|exists:employees_details,emp_id",
+
             "unit_id" => "nullable|integer|exists:units,id",
             "department_id" => "nullable|integer|exists:departments,id",
             "designation_id" => "nullable|integer|exists:designations,id",
             "doj" => "nullable|date",
             "dor" => "nullable|date|after_or_equal:doj",
-            "leave_balance" => "nullable|integer|min:0",
+            "dob"=> "nullable|date",
+            // "leave_balance" => "nullable|integer|min:0", // This rule is commented out.
             "status" => "required|string|in:active,inactive",
             "email" => "required|email|unique:users,email",
             "password" => "required|string|min:8",
@@ -75,7 +80,7 @@ public function store(Request $request)
         try {
             // 2. Create the User record first
             $user = User::create([
-                'name' => $validated_data['employee_name'],
+                'name' => $validated_data['emp_name'],
                 'email' => $validated_data['email'],
                 'password' => Hash::make($validated_data['password']),
             ]);
@@ -88,16 +93,15 @@ public function store(Request $request)
             $validated_data['updated_by'] = Auth::id();
 
             // 5. Create the Employee record, linked to the new user
+            // Ensure your Employees model is configured with a fillable array
             $employee = Employees::create($validated_data);
 
             return redirect()->route('employees.index')
                 ->with('success', 'Employee and associated user created successfully.');
 
         } catch (ValidationException $e) {
-            // If validation fails, return with errors
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
-            // Handle other general exceptions
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error creating employee: ' . $e->getMessage());
@@ -131,54 +135,57 @@ public function store(Request $request)
     /**
      * Update the specified resource in storage.
      */
+
+
     public function update(Request $request, string $id)
     {
         $employee = Employees::findOrFail($id);
-
-        // Get the user record linked to this employee
         $user = $employee->user;
 
-        // Validation rules for updating
+        // Validate everything except emp_id
         $validated_data = $request->validate([
-            "emp_id" => ["required", "string", "max:255", Rule::unique('employees_details')->ignore($employee->id)],
-            "employee_name" => "required|string|max:255",
-            "manager_id" => "nullable|integer|exists:employees_details,id",
+            "emp_name" => "required|string|max:255",
+            "manager_id" => "nullable|integer|exists:employees_details,emp_id",
             "unit_id" => "nullable|integer|exists:units,id",
             "department_id" => "nullable|integer|exists:departments,id",
             "designation_id" => "nullable|integer|exists:designations,id",
             "doj" => "nullable|date",
             "dor" => "nullable|date|after_or_equal:doj",
-            "leave_balance" => "nullable|integer|min:0",
+            // "leave_balance" => "nullable|integer|min:0",
             "status" => "required|string|in:active,inactive",
-            "email" => ["required", "email", Rule::unique('users')->ignore($user->id)],
-            "password" => "nullable|string|min:8|confirmed", // Password is now optional
+            "email" => [
+                "required",
+                "email",
+                Rule::unique('users')->ignore($user->id), // keep email unique
+            ],
+            "password" => "nullable|string|min:8|confirmed",
         ]);
 
         try {
-            // Update the User record
-            $user->name = $validated_data['employee_name'];
+            // Update User
+            $user->name = $validated_data['emp_name'];
             $user->email = $validated_data['email'];
             if ($request->filled('password')) {
                 $user->password = Hash::make($validated_data['password']);
             }
             $user->save();
 
-            // Update the Employee record
-            $employee->fill($validated_data);
+            // Update Employee (exclude emp_id)
+            $employee->fill(collect($validated_data)->except(['email', 'password'])->toArray());
             $employee->updated_by = Auth::id();
             $employee->save();
 
             return redirect()->route('employees.index')
                 ->with('success', 'Employee details updated successfully.');
 
-        } catch (ValidationException $e) {
-            return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
                 ->with('error', 'Error updating employee: ' . $e->getMessage());
         }
     }
+
+
 
     /**
      * Remove the specified resource from storage.

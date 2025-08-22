@@ -13,7 +13,7 @@
         <!-- Top Controls: Create Button + Search -->
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
             <!-- Create Role Button -->
-            @can('create menu items')
+            @can('create menus')
                 <a href="{{ route('menus.create') }}"
                     class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
                     + Create Menu
@@ -38,7 +38,7 @@
                         <!-- Header Row -->
                         <li class="flex justify-between gap-x-6 bg-gray-50 py-3 px-4 font-semibold text-gray-900">
                             <span class="flex-1">Menu Name</span>
-                            @canany(['edit menu items', 'delete menu items'])
+                            @canany(['edit menus', 'delete menus'])
                                 <span class="w-24 text-right">Actions</span>
                             @endcanany(['edit menu items', 'delete menu items'])
                         </li>
@@ -55,11 +55,11 @@
                                 </div>
 
                                 <div class="w-24 flex justify-end items-center gap-2">
-                                    @can('edit menu items')
+                                    @can('edit menus')
                                         <a href="{{ route('menus.edit', $menu->id) }}"
                                             class="text-blue-600 hover:underline text-sm">Edit</a>
                                     @endcan
-                                    @can('delete menu items')
+                                    @can('delete menus')
                                         <form action="{{ route('roles.destroy', $menu->id) }}" method="POST"
                                             onsubmit="return confirm('Are you sure, do you really want to DELETE this ?');">
                                             @csrf
