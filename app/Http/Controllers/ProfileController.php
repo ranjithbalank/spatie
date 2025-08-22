@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Http\Requests\ProfileUpdateRequest;
+use App\Models\Employees;
 use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
@@ -16,6 +17,7 @@ class ProfileController extends Controller
      */
     public function edit(Request $request): View
     {
+
         return view('profile.edit', [
             'user' => $request->user(),
         ]);
@@ -26,6 +28,8 @@ class ProfileController extends Controller
      */
     public function update(ProfileUpdateRequest $request): RedirectResponse
     {
+        //  dd($request->all());
+           $user = $request->user();
         $request->user()->fill($request->validated());
 
         if ($request->user()->isDirty('email')) {
@@ -33,6 +37,16 @@ class ProfileController extends Controller
         }
 
         $request->user()->save();
+        // Now, update the associated employee record
+        // The user ID from the authenticated user is the link to the employee.
+        $employee = Employees::where('user_id', $user->id)->first();
+
+        if ($employee) {
+            // Update the employee's name and any other relevant fields.
+            $employee->employee_name = $request->validated('name');
+            $employee->updated_by = $user->id;
+            $employee->save();
+        }
 
         return Redirect::route('profile.edit')->with('status', 'profile-updated');
     }

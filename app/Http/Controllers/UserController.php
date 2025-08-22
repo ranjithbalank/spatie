@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Employees;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Spatie\Permission\Models\Role;
@@ -17,7 +18,7 @@ class UserController extends Controller
     {
         $search = $request->input('search');
         $filterRoleId = $request->input('role_id');
-
+        $employee = Employees::all();
         $users = User::with('roles') // Eager load the roles relationship
             ->when($search, function ($query, $search) {
                 $query->where('name', 'like', "%{$search}%")
@@ -35,7 +36,7 @@ class UserController extends Controller
         // Fetch all roles to populate the filter dropdown in your view
         $roles = Role::orderBy('name')->get();
 
-        return view("users.index", compact("users", "search", "roles", "filterRoleId"));
+        return view("users.index", compact("users", "search", "roles", "filterRoleId","employee"));
     }
 
 
@@ -71,6 +72,8 @@ class UserController extends Controller
     $user->save();
     $role = Role::findById($validated['role']);
     $user->assignRole($role->name);
+    Employees::updateOrCreate(
+            ['employee_name' => $validated['name']]);
     // Redirect to the users list with a success message
     return redirect()->route('users.index')->with('success', 'User created successfully!');
 }
@@ -124,6 +127,9 @@ class UserController extends Controller
             'status' => $validated['status'],
         ]);
         $user->syncRoles($role->name);
+        Employees::updateOrCreate(
+            ['user_id' => $user->id],
+            ['employee_name' => $validated['name']]);
         // Redirect to the users list with a success message
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }

@@ -42,6 +42,11 @@
                 @method('PUT')
             @endif
 
+            <div>
+                <input type="text" name="user_id" value="{{ old('user_id', $employee->user_id ?? '') }}"
+                    class="mt-1 block w-25 md:w-1/3 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                    hidden>
+            </div>
             {{-- Emp ID --}}
             <div class="w-50">
                 <label class="block text-sm font-medium text-gray-700">
@@ -68,23 +73,46 @@
                     <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
                 @enderror
             </div>
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-4 w-75">
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Manager</label>
+                    <select name="manager_id"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
+                        <option value=""> Select Manager </option>
+                        @foreach ($employees as $m)
+                            <option value="{{ $m->id }}"
+                                {{ (string) old('manager_id', $employee->manager_id ?? '') === (string) $m->id ? 'selected' : '' }}>
+                                {{ $m->employee_name }} ({{ $m->emp_id }})
+                            </option>
+                        @endforeach
+                    </select>
+                    @error('manager_id')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
+                <div>
+                    <label class="block text-sm font-medium text-gray-700">Email</label>
+                    <input type="text" name="email" value="{{ old('email', $employee->user->email ?? '') }}"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border"
+                        required>
+                    @error('email')
+                        <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
+                    @enderror
+                </div>
 
-            {{-- Manager --}}
-            <div class="w-50">
-                <label class="block text-sm font-medium text-gray-700">Manager</label>
-                <select name="manager_id"
-                    class="mt-1 block w-full md:w-1/2 rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
-                    <option value=""> Select Manager </option>
-                    @foreach ($employees as $m)
-                        <option value="{{ $m->id }}"
-                            {{ (string) old('manager_id', $employee->manager_id ?? '') === (string) $m->id ? 'selected' : '' }}>
-                            {{ $m->employee_name }} ({{ $m->emp_id }})
-                        </option>
-                    @endforeach
-                </select>
-                @error('manager_id')
-                    <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
-                @enderror
+                <div>
+                    <label for="password" class="block font-medium text-sm text-gray-700">Password</label>
+                    <input type="password" id="password" name="password"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        @if (!isset($employee)) required @endif />
+                </div>
+                <div>
+                    <label for="password_confirmation" class="block font-medium text-sm text-gray-700">Confirm
+                        Password</label>
+                    <input type="password" id="password_confirmation" name="password_confirmation"
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500"
+                        @if (!isset($employee)) required @endif />
+                </div>
             </div>
 
             {{-- Unit / Department / Designation --}}

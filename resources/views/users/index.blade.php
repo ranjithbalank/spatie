@@ -66,7 +66,7 @@
                                     {{ Str::ucfirst($user->name) }}
                                 </p>
                                 <p class="text-sm text-gray-500">
-                                    Employee id:<span class="text-red-600"> {{ $user->id }} </span>|
+                                    Employee id:<span class="text-red-600"> {{  $employee[0]->emp_id }} </span>|
                                     Status:
                                     @if ($user->status === 'active')
                                         <span class="text-green-600 font-bold">{{ ucfirst($user->status) }}</span>

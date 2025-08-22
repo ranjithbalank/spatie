@@ -48,19 +48,18 @@
                                         <p class="text-sm font-medium text-gray-900 truncate">
                                             {{ Str::ucfirst($employee->employee_name) }}
                                         </p>
-                                        <p class="text-xs text-gray-500">
-                                            Emp ID: {{ $employee->emp_id }}
-                                        </p>
-                                        <p class="text-xs text-gray-500">
+                                        {{-- <p class="text-xs text-gray-500">
+                                            Emp ID: {{ $employee->emp_id }} |
+                                       <span class="text-xs text-gray-500">
                                             Designation: {{ $employee->designation_name ?? 'N/A' }}
-                                        </p>
+                                       </span>
                                         <p class="text-xs text-gray-500">
                                             Manager:
                                             {{ $employee->manager ? $employee->manager->employee_name : 'N/A' }}
                                         </p>
                                         <p class="text-xs text-gray-500">
                                             Status: {{ Str::ucfirst($employee->status) }}
-                                        </p>
+                                        </p> --}}
                                     </div>
                                 </div>
                                 <div class="w-24 flex justify-end items-center gap-2">
