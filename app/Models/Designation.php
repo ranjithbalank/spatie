@@ -11,4 +11,5 @@ class Designation extends Model
         'designation_code',
         'status'
     ];
+
 }

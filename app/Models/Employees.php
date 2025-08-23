@@ -28,4 +28,8 @@ class Employees extends Model
     {
         return $this->belongsTo(User::class, 'user_id');
     }
+    public function designation()
+    {
+        return $this->belongsTo(Designation::class, 'designation_id');
+    }
 }

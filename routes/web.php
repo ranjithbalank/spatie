@@ -44,7 +44,10 @@ Route::middleware('auth')->group(function () {
     Route::resource("users",UserController::class);
     Route::resource("designations",DesignationController::class);
     Route::resource('employees',EmployeeController::class);
+    // Approval routes
     Route::resource('leaves',LeaveController::class);
+    Route::put('leaves/{id}/approve', [LeaveController::class, 'approve'])->name('leaves.approve');
+    Route::put('leaves/{id}/reject', [LeaveController::class, 'reject'])->name('leaves.reject');
 });
 
 

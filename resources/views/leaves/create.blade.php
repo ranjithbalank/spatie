@@ -2,189 +2,153 @@
     <x-slot name="header">
         <div class="flex justify-between items-center w-full mb-4">
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
-                {{ __('Leave Details') }}
+                {{ isset($leave) ? __('Edit Leave') : __('Apply Leave') }}
             </h2>
-
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
+            <a href="{{ route('leaves.index') }}" class="text-sm text-red-700 no-underline">
                 &larr; {{ __('Back') }}
             </a>
         </div>
-        <hr class="mb-4">
+        <hr>
 
-        {{-- Leave View Tabs --}}
-        <div class="flex flex-col sm:flex-row sm:justify-start gap-4 mb-4">
-            <a href="{{ route('leaves.index', ['view' => 'mine']) }}"
-               class="px-4 py-2 rounded-md transition {{ request()->get('view') !== 'team' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200' }}">
-                My Leaves
-            </a>
 
-            @if (auth()->user()->hasAnyRole(['Manager', 'Admin', 'HR']))
-                <a href="{{ route('leaves.index', ['view' => 'team']) }}"
-                   class="px-4 py-2 rounded-md transition {{ request()->get('view') === 'team' ? 'bg-indigo-600 text-white' : 'text-gray-600 hover:bg-gray-200' }}">
-                   {{ auth()->user()->hasRole('Admin') ? 'All Leaves' : 'Leave Approvals' }}
-                   @if (!empty($pendingCount) && $pendingCount > 0)
-                       <span class="ml-1 px-2 py-1 bg-red-500 text-white text-xs rounded-full">
-                           {{ $pendingCount }}
-                       </span>
-                   @endif
-                </a>
-            @endif
-        </div>
+        <div class="py-6 ">
+            <form method="POST"
+                action="{{ isset($leave) ? route('leaves.update', $leave->id) : route('leaves.store') }}">
+                @csrf
+                @if (isset($leave))
+                    @method('PUT')
+                @endif
 
-        {{-- Action Buttons & Search --}}
-        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
-            @if (request()->get('view') !== 'team')
-                <a href="{{ route('leaves.create') }}"
-                   class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                   + Apply Leave
-                </a>
-            @else
-                @hasanyrole('Admin|HR')
-                    <div class="relative">
-                        <button type="button"
-                            class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700 transition"
-                            onclick="document.getElementById('exportMenu').classList.toggle('hidden')">
-                            Export ▼
-                        </button>
-                        <ul id="exportMenu"
-                            class="absolute right-0 mt-2 w-48 bg-white border border-gray-200 rounded-md shadow-lg hidden">
-                            <li>
-                                <a href="{{ route('leaves.export.excel') }}"
-                                   class="block px-4 py-2 text-green-600 hover:bg-gray-100">
-                                   Download as Excel
-                                </a>
-                            </li>
-                            <li>
-                                <a href="{{ route('leaves.export.pdf') }}"
-                                   class="block px-4 py-2 text-red-600 hover:bg-gray-100">
-                                   Download as PDF
-                                </a>
-                            </li>
-                        </ul>
+                {{-- Employee Info --}}
+                <div class="grid grid-cols-3 gap-4 mb-4 w-50">
+
+                    <div>
+                        <label for="emp_id" class="block text-sm font-medium text-gray-700">Employee ID</label>
+                        <input type="text" name="emp_id" id="emp_id"
+                            value="{{ auth()->user()->employees->first()->emp_id ?? '' }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm" readonly>
                     </div>
-                @endhasanyrole
-            @endif
 
-            <form method="GET" action="{{ route('leaves.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
-                <input type="text" name="search" placeholder="Search Leaves..."
-                       value="{{ request('search') }}"
-                       class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1" />
-                <button type="submit" class="px-4 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                    Search
-                </button>
+                    <div>
+                        <label for="emp_name" class="block text-sm font-medium text-gray-700">Employee Name</label>
+                        <input type="text" id="emp_name"
+                            value="{{ auth()->user()->employee->emp_name ?? auth()->user()->name }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm" readonly>
+                    </div>
+
+                    <div>
+                        <label for="emp_role" class="block text-sm font-medium text-gray-700">Designation</label>
+                        <input type="text" id="emp_role"
+                            value="{{ auth()->user()->employees->designation->designation_name }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 bg-gray-100 shadow-sm" readonly>
+                    </div>
+                </div>
+
+                {{-- Start & End Date --}}
+                <div class="grid grid-cols-3 gap-4 w-50">
+                    <div class="mb-4">
+                        <label for="start_date" class="block text-sm font-medium text-gray-700">Start Date</label>
+                        <input type="date" name="start_date" id="start_date"
+                            value="{{ $leave->start_date ?? old('start_date') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        @error('start_date')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+
+                    <div class="mb-4">
+                        <label for="end_date" class="block text-sm font-medium text-gray-700">End Date</label>
+                        <input type="date" name="end_date" id="end_date"
+                            value="{{ $leave->end_date ?? old('end_date') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                        @error('end_date')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                    {{-- Total Days --}}
+                    <div class="mb-4">
+                        <label for="total_days" class="block text-sm font-medium text-gray-700">Total Days</label>
+                        <input type="number" name="total_days" id="total_days"
+                            value="{{ $leave->total_days ?? old('total_days') }}"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500"
+                            readonly>
+                        @error('total_days')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                </div>
+                @can('approve leaves')
+                    {{-- Leave Type --}}
+                    <div class="mb-4 w-25">
+                        <label for="leave_type" class="block text-sm font-medium text-gray-700">Leave Type</label>
+                        <select name="leave_type" id="leave_type"
+                            class="mt-1 block w-1/2 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">
+                            <option value="">Select Leave Type</option>
+                            @foreach (['sick', 'casual', 'paid', 'unpaid', 'maternity', 'other'] as $type)
+                                <option value="{{ $type }}"
+                                    {{ (isset($leave) && $leave->leave_type == $type) || old('leave_type') == $type ? 'selected' : '' }}>
+                                    {{ ucfirst($type) }}
+                                </option>
+                            @endforeach
+                        </select>
+                        @error('leave_type')
+                            <span class="text-red-600 text-sm">{{ $message }}</span>
+                        @enderror
+                    </div>
+                @endcan
+                {{-- Reason --}}
+                <div class="mb-4 ">
+                    <label for="reason" class="block text-sm font-medium text-gray-700">Reason</label>
+                    <textarea name="reason" id="reason" rows="3"
+                        class="mt-1 block w-25 rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">{{ $leave->reason ?? old('reason') }}</textarea>
+                    @error('reason')
+                        <span class="text-red-600 text-sm">{{ $message }}</span>
+                    @enderror
+                </div>
+
+                {{-- Manager Remark (optional, only for edit) --}}
+                @if (isset($leave))
+                    <div class="mb-4">
+                        <label for="manager_remark" class="block text-sm font-medium text-gray-700">Manager
+                            Remark</label>
+                        <textarea name="manager_remark" id="manager_remark" rows="2"
+                            class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:ring-indigo-500 focus:border-indigo-500">{{ $leave->manager_remark ?? old('manager_remark') }}</textarea>
+                    </div>
+                @endif
+
+                {{-- Submit --}}
+                <div class="flex justify-end">
+                    <button type="submit" class="px-6 py-2 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
+                        {{ isset($leave) ? 'Update Leave' : 'Apply Leave' }}
+                    </button>
+                </div>
             </form>
         </div>
+
+        {{-- JS to auto-calculate total days --}}
+        @push('scripts')
+            <script>
+                function calculateTotalDays() {
+                    const start = document.getElementById('start_date').value;
+                    const end = document.getElementById('end_date').value;
+                    const totalDaysInput = document.getElementById('total_days');
+
+                    if (start && end) {
+                        const startDate = new Date(start);
+                        const endDate = new Date(end);
+                        const diffTime = endDate - startDate;
+                        const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24)) + 1;
+                        totalDaysInput.value = diffDays > 0 ? diffDays : 0;
+                    } else {
+                        totalDaysInput.value = '';
+                    }
+                }
+
+                document.getElementById('start_date').addEventListener('change', calculateTotalDays);
+                document.getElementById('end_date').addEventListener('change', calculateTotalDays);
+
+                window.addEventListener('load', calculateTotalDays);
+            </script>
+        @endpush
     </x-slot>
-
-    {{-- Leave Table --}}
-    <div class="bg-white shadow rounded-lg p-4">
-        @if ($leaves->isEmpty())
-            <div class="text-center text-yellow-600 font-semibold">No leave records found.</div>
-        @else
-            <div class="overflow-x-auto">
-                <table id="leaveTable" class="min-w-full border border-gray-200 divide-y divide-gray-200">
-                    <thead class="bg-gray-100">
-                        <tr>
-                            <th class="px-4 py-2">S.No</th>
-                            @if (request()->get('view') === 'team')
-                                <th class="px-4 py-2">Employee</th>
-                            @endif
-                            <th class="px-4 py-2">Leave</th>
-                            <th class="px-4 py-2">From Date</th>
-                            <th class="px-4 py-2">To Date</th>
-                            <th class="px-4 py-2">Days</th>
-                            <th class="px-4 py-2">Reason</th>
-                            <th class="px-4 py-2">Status</th>
-                            <th class="px-4 py-2">Action</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 text-center">
-                        @foreach ($leaves as $index => $leave)
-                            <tr>
-                                <td class="px-4 py-2">{{ $index + 1 }}</td>
-                                @if (request()->get('view') === 'team')
-                                    <td class="px-4 py-2 text-indigo-600">{{ Str::ucfirst($leave->user->name ?? '-') }}</td>
-                                @endif
-                                <td class="px-4 py-2 text-red-600 text-left">{{ $leave->leave_type }}</td>
-                                <td class="px-4 py-2">
-                                    {{ $leave->leave_type === 'comp-off' && $leave->comp_off_worked_date
-                                        ? \Carbon\Carbon::parse($leave->comp_off_worked_date)->format('d M Y')
-                                        : ($leave->from_date
-                                            ? \Carbon\Carbon::parse($leave->from_date)->format('d M Y')
-                                            : '-') }}
-                                </td>
-                                <td class="px-4 py-2">
-                                    {{ $leave->leave_type === 'comp-off' && $leave->comp_off_leave_date
-                                        ? \Carbon\Carbon::parse($leave->comp_off_leave_date)->format('d M Y')
-                                        : ($leave->to_date
-                                            ? \Carbon\Carbon::parse($leave->to_date)->format('d M Y')
-                                            : '-') }}
-                                </td>
-                                <td class="px-4 py-2">{{ $leave->leave_days }}</td>
-                                <td class="px-4 py-2">{{ ucfirst($leave->reason) }}</td>
-                                <td class="px-4 py-2">
-                                    @if ($leave->status == 'hr approved')
-                                        <span class="px-2 py-1 bg-green-500 text-white rounded-md text-xs">HR APPROVED</span>
-                                    @elseif ($leave->status == 'hr rejected')
-                                        <span class="px-2 py-1 bg-red-500 text-white rounded-md text-xs">HR REJECTED</span>
-                                    @elseif ($leave->status == 'supervisor/ manager approved')
-                                        <span class="px-2 py-1 bg-blue-500 text-white rounded-md text-xs">SUPERVISOR APPROVED</span>
-                                    @elseif ($leave->status == 'supervisor/ manager rejected')
-                                        <span class="px-2 py-1 bg-red-500 text-white rounded-md text-xs">SUPERVISOR REJECTED</span>
-                                    @elseif ($leave->status == 'pending')
-                                        <span class="px-2 py-1 bg-yellow-400 text-black rounded-md text-xs">PENDING</span>
-                                    @else
-                                        <span class="px-2 py-1 bg-gray-400 text-white rounded-md text-xs">UNKNOWN</span>
-                                    @endif
-                                </td>
-                                <td class="px-4 py-2">
-                                    <div class="flex justify-center gap-2">
-                                        @if (auth()->user()->hasRole('Employee') && auth()->id() === $leave->user_id)
-                                            <a href="{{ route('leaves.edit', $leave->id) }}"
-                                               class="px-2 py-1 bg-blue-500 text-white rounded hover:bg-blue-600 text-xs">
-                                               Edit
-                                            </a>
-                                        @endif
-                                        <button type="button"
-                                                class="px-2 py-1 bg-indigo-500 text-white rounded hover:bg-indigo-600 text-xs"
-                                                data-bs-toggle="modal" data-bs-target="#leaveModal{{ $leave->id }}">
-                                            View
-                                        </button>
-                                        @if (auth()->user()->hasRole('Admin'))
-                                            <form action="{{ route('leaves.destroy', $leave->id) }}" method="POST"
-                                                  onsubmit="return confirm('Are you sure?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                        class="px-2 py-1 bg-red-500 text-white rounded hover:bg-red-600 text-xs">
-                                                    Delete
-                                                </button>
-                                            </form>
-                                        @endif
-                                    </div>
-                                    @include('leaves.partials.show-modal', [
-                                        'leave' => $leave,
-                                        'user' => $leave->user ?? null,
-                                    ])
-                                </td>
-                            </tr>
-                        @endforeach
-                    </tbody>
-                </table>
-            </div>
-        @endif
-    </div>
-
-    {{-- DataTables (optional, keep if you want sorting/pagination) --}}
-    @push('scripts')
-        <script src="https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('#leaveTable').DataTable({
-                    "order": [],
-                    "pageLength": 10
-                });
-            });
-        </script>
-    @endpush
 </x-app-layout>
