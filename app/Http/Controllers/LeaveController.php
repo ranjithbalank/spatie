@@ -16,7 +16,7 @@ class LeaveController extends Controller
     public function index()
     {
         // Get the employee linked to the logged-in user
-        $employee = Employees::where('user_id', auth()->user()->id)->first();
+        $employee = Employees::where('user_id', Auth::id())->first();
 
         if (!$employee) {
             return back()->with('error', 'Employee record not found.');
