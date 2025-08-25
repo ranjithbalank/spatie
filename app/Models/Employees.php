@@ -32,4 +32,8 @@ class Employees extends Model
     {
         return $this->belongsTo(Designation::class, 'designation_id');
     }
+    public function managedEmployees()
+{
+    return $this->hasMany(Employees::class, 'manager_id', 'id');
+}
 }
