@@ -4,9 +4,8 @@
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
                 {{ isset($employee) ? __('Edit Employee Details') : __('Create Employee Details') }}
             </h2>
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
-                &larr; {{ __('Back') }}
-            </a>
+             <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
         <hr class="mb-4">
 

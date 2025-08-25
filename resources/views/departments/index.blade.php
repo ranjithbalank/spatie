@@ -5,9 +5,8 @@
                 {{ __('Departments') }}
             </h2>
 
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
-                &larr; {{ __('Back') }}
-            </a>
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
 
         <hr class="mb-4">
@@ -70,14 +69,14 @@
                                         <a href="{{ route('departments.edit', $department->id) }}"
                                             class="text-blue-600 hover:underline text-sm">Edit</a>
                                     @endcan
-                                    @can("delete departments")
-                                    <form action="{{ route('departments.destroy', $department->id) }}" method="POST"
-                                        onsubmit="return confirm('Are you sure you want to delete this department?');">
-                                        @csrf
-                                        @method('DELETE')
-                                        <button type="submit"
-                                            class="text-red-600 hover:underline text-sm">Delete</button>
-                                    </form>
+                                    @can('delete departments')
+                                        <form action="{{ route('departments.destroy', $department->id) }}" method="POST"
+                                            onsubmit="return confirm('Are you sure you want to delete this department?');">
+                                            @csrf
+                                            @method('DELETE')
+                                            <button type="submit"
+                                                class="text-red-600 hover:underline text-sm">Delete</button>
+                                        </form>
                                     @endcan
                                 </div>
                             </li>

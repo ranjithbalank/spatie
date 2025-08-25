@@ -5,9 +5,8 @@
                 {{ __('Designations') }}
             </h2>
 
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
-                &larr; {{ __('Back') }}
-            </a>
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
         <hr class="mb-4">
         <!-- Top Controls: Create Button + Search -->
@@ -20,7 +19,8 @@
             @endcan
 
 
-            <form method="GET" action="{{ route('designations.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
+            <form method="GET" action="{{ route('designations.index') }}"
+                class="flex items-end gap-2 w-full sm:w-1/3">
                 <input type="text" name="search" placeholder="Search Designations..."
                     value="{{ request('search') }}"
                     class="px-3 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1" />

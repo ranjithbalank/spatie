@@ -69,7 +69,9 @@
 
                                 <p class="text-sm text-gray-500">
                                     @foreach ($user->employees ?? [] as $emp)
-                                        Employee ID: <span class="text-red-600">{{ $emp->emp_id }} | </span>
+                                        @if (is_object($emp) && property_exists($emp, 'emp_id'))
+                                            Employee ID: <span class="text-red-600">{{ $emp->emp_id }} | </span>
+                                        @endif
                                     @endforeach
                                     Status:
                                     @if ($user->status === 'active')

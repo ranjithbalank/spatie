@@ -4,9 +4,11 @@
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
                 {{ __('Leaves Details') }}
             </h2>
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
+            {{-- <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
                 &larr; {{ __('Back') }}
-            </a>
+            </a> --}}
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
         <hr>
 
@@ -67,25 +69,31 @@
                                     <tr>
                                         <td class="px-4 py-2 text-left">{{ $index + 1 }}</td>
                                         <td class="px-4 py-2 text-left">{{ $leave->leave_type ?? 'N/A' }}</td>
-                                        <td class="px-4 py-2">{{ $leave->start_date }}</td>
-                                        <td class="px-4 py-2">{{ $leave->end_date }}</td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($leave->start_date)->format('M d, Y') }}</td>
+                                        <td class="px-4 py-2">
+                                            {{ \Carbon\Carbon::parse($leave->end_date)->format('M d, Y') }}</td>
                                         <td class="px-4 py-2">{{ ucfirst($leave->manager_status) }}</td>
                                         <td class="px-4 py-2">{{ ucfirst($leave->hr_status) }}</td>
-                                        <td class="px-4 py-2 flex space-x-2"">
+                                        <td class="px-4 py-2 flex items-center justify-center space-x-2">
+                                            {{-- View Button --}}
                                             <a href="{{ route('leaves.show', $leave->id) }}"
                                                 class="px-3 py-1 bg-indigo-600 text-white rounded-md hover:bg-indigo-700">
-                                                View
+                                                <i class="bi bi-eye"></i>
                                             </a>
-                                            {{-- Delete Button --}}
-                                            <form action="{{ route('leaves.destroy', $leave->id) }}" method="POST"
-                                                onsubmit="return confirm('Are you sure you want to delete this leave request?');">
-                                                @csrf
-                                                @method('DELETE')
-                                                <button type="submit"
-                                                    class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
-                                                    Delete
-                                                </button>
-                                            </form>
+
+                                            @can('delete leaves')
+                                                {{-- Delete Button --}}
+                                                <form action="{{ route('leaves.destroy', $leave->id) }}" method="POST"
+                                                    onsubmit="return confirm('Are you sure you want to delete this leave request?');">
+                                                    @csrf
+                                                    @method('DELETE')
+                                                    <button type="submit"
+                                                        class="px-3 py-1 bg-red-600 text-white rounded-md hover:bg-red-700">
+                                                        <i class="bi bi-trash"></i>
+                                                    </button>
+                                                </form>
+                                            @endcan
                                         </td>
                                     </tr>
                                 @endforeach

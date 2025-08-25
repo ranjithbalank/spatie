@@ -5,9 +5,8 @@
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
                 {{ __('Admin') }}
             </h2>
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
-                &larr;{{ __('Back') }}
-            </a>
+             <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
 
     </x-slot>

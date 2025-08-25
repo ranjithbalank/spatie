@@ -6,9 +6,8 @@
                 {{ isset($department) ? __('Edit Department') : __('Create Department') }}
             </h2>
 
-            <a href="{{ route('departments.index') }}" class="text-sm text-red-700 no-underline">
-                &larr; {{ __('Back') }}
-            </a>
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
 
         <hr class="mb-4">
@@ -36,17 +35,15 @@
             {{-- Department Code --}}
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Department Code</label>
-                <input type="text" name="code"
-                       value="{{ old('code', $department->code ?? '') }}"
-                       class="form-input w-full rounded border-gray-300 w-25" required>
+                <input type="text" name="code" value="{{ old('code', $department->code ?? '') }}"
+                    class="form-input w-full rounded border-gray-300 w-25" required>
             </div>
 
             {{-- Department Name --}}
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Department Name</label>
-                <input type="text" name="name"
-                       value="{{ old('name', $department->name ?? '') }}"
-                       class="form-input w-full rounded border-gray-300 w-25" required>
+                <input type="text" name="name" value="{{ old('name', $department->name ?? '') }}"
+                    class="form-input w-full rounded border-gray-300 w-25" required>
             </div>
 
             {{-- Unit Dropdown --}}
@@ -67,14 +64,18 @@
             <div class="mb-4">
                 <label class="block text-sm font-medium text-gray-700">Status</label>
                 <select name="status" class="form-select w-full rounded border-gray-300 w-25" required>
-                    <option value="active" {{ old('status', $department->status ?? '') === 'active' ? 'selected' : '' }}>Active</option>
-                    <option value="inactive" {{ old('status', $department->status ?? '') === 'inactive' ? 'selected' : '' }}>Inactive</option>
+                    <option value="active"
+                        {{ old('status', $department->status ?? '') === 'active' ? 'selected' : '' }}>Active</option>
+                    <option value="inactive"
+                        {{ old('status', $department->status ?? '') === 'inactive' ? 'selected' : '' }}>Inactive
+                    </option>
                 </select>
             </div>
 
             {{-- Actions --}}
             <div class="flex justify-end">
-                <a href="{{ route('departments.index') }}" class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancel</a>
+                <a href="{{ route('departments.index') }}"
+                    class="bg-gray-500 text-white px-4 py-2 rounded mr-2">Cancel</a>
                 <button type="submit" class="bg-green-600 text-white px-4 py-2 rounded">
                     {{ isset($department) ? 'Update' : 'Save' }}
                 </button>

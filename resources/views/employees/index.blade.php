@@ -5,9 +5,8 @@
                 {{ __('Employees Details') }}
             </h2>
 
-            <a href="{{ route('dashboard') }}" class="text-sm text-red-700 no-underline">
-                &larr; {{ __('Back') }}
-            </a>
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
         <hr class="mb-4">
         <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">

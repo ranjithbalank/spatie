@@ -51,8 +51,8 @@
                                 return 'menu items';
                             }
                             // Simplified checks for menu-related permissions
-                            if (str_contains($name, 'menu authorization')) {
-                                return 'menu authorization';
+                            if (str_contains($name, 'menu permission')) {
+                                return 'menu permissions';
                             }
                             if (str_contains($name, 'menu items')) {
                                 return 'menu items';
