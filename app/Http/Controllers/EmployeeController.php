@@ -139,6 +139,7 @@ class EmployeeController extends Controller
 
     public function update(Request $request, string $id)
     {
+        // dd($request->all());
         $employee = Employees::findOrFail($id);
         $user = $employee->user;
 

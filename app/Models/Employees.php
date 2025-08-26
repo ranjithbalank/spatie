@@ -36,4 +36,9 @@ class Employees extends Model
 {
     return $this->hasMany(Employees::class, 'manager_id', 'id');
 }
+public function users()
+{
+    // An Employee belongs to a User
+    return $this->belongsTo(User::class);
+}
 }

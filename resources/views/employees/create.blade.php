@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
                 {{ isset($employee) ? __('Edit Employee Details') : __('Create Employee Details') }}
             </h2>
-             <a href="#" class="text-sm text-red-700 no-underline"
+            <a href="#" class="text-sm text-red-700 no-underline"
                 onclick="window.history.back(); return false;">&larr; Back</a>
         </div>
         <hr class="mb-4">
@@ -78,8 +78,9 @@
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
                         <option value="">Select Manager</option>
                         @foreach ($employees as $emp)
+                            {{-- @dd(old('manager_id')); --}}
                             <option value="{{ $emp->emp_id }}"
-                                {{ old('manager_id', $emp->manager_id) == $emp->emp_id ? 'selected' : '' }}>
+                                {{ (string) old('manager_id', $employee->manager_id ?? '') === (string) $emp->emp_id ? 'selected' : '' }}>
                                 {{ $emp->emp_name }} ({{ $emp->emp_id }})
                             </option>
                         @endforeach
