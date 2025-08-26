@@ -5,16 +5,17 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
-use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\LeaveController;
 
+use App\Http\Controllers\HolidayController;
+use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\MenuRolePermissionController;
 use App\Http\Controllers\DashboardController; // <-- Make sure to import your controller
-use App\Http\Controllers\EmployeeController;
-use App\Http\Controllers\LeaveController;
 
 Route::get('/', function () {
     return redirect()->route('login');
@@ -45,9 +46,12 @@ Route::middleware('auth','menu')->group(function () {
     Route::resource("designations",DesignationController::class);
     Route::resource('employees',EmployeeController::class);
     // Approval routes
-    Route::resource('leaves',LeaveController::class);
-    Route::put('leaves/{id}/approve', [LeaveController::class, 'approve'])->name('leaves.approve');
-    Route::put('leaves/{id}/reject', [LeaveController::class, 'reject'])->name('leaves.reject');
+    // Route::resource('leaves',LeaveController::class);
+    // Route::post('leaves/{leave}/manager-decision', [LeaveController::class, 'managerDecision'])->name('leaves.manager.decision');
+    // Route::post('leaves/{leave}/hr-decision', [LeaveController::class, 'hrDecision'])->name('leaves.hr.decision');
+
+    // Holidays List
+    Route::resource('holidays', HolidayController::class);
 });
 
 
