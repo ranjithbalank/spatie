@@ -14,6 +14,7 @@ use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DesignationController;
 use App\Http\Controllers\Admin\PermissionController;
+use App\Http\Controllers\InternalJobPostingController;
 use App\Http\Controllers\MenuRolePermissionController;
 use App\Http\Controllers\DashboardController; // <-- Make sure to import your controller
 
@@ -52,6 +53,14 @@ Route::middleware('auth','menu')->group(function () {
 
     // Holidays List
     Route::resource('holidays', HolidayController::class);
+    Route::resource('internal-jobs', InternalJobPostingController::class);
+    Route::post('/internal-jobs/apply/{job}', [InternalJobPostingController::class, 'apply'])
+        ->name('internal-jobs.apply');
+    Route::get('/export-applicants', [InternalJobPostingController::class, 'exportApplicants'])->name('export.applicants');
+    Route::get('/export-applicants-pdf', [InternalJobPostingController::class, 'exportApplicantsPdf'])->name('export.applicants.pdf');
+    // ✅ Correct route method for file upload
+    Route::post('/import-applicants-pdf', [InternalJobPostingController::class, 'uploadFinalStatus'])
+        ->name('import.applicants.pdf');
 });
 
 

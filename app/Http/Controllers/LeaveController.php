@@ -17,71 +17,73 @@ class LeaveController extends Controller
     // app/Http/Controllers/LeavesController.php
 
    public function index(Request $request)
+{
+    $user = Auth::user();
+    $view = $request->get('view', 'mine');
 
-    {
-        $user = Auth::user();
-        $view = $request->get('view', 'mine');
+    // Pending count based on role
+    $pendingCount = 0;
 
-        // Pending count based on role
-        $pendingCount = 0;
-
-        if ($user->hasRole('admin')) {
-            $pendingCount = Leave::where('status', 'pending')->count();
-        } elseif ($user->hasRole('manager')) {
-            // Correctly checks the manager_id in the employees table
-            $pendingCount = Leave::whereHas('user.employees', function ($query) use ($user) {
-                $query->where('manager_id', $user->employees->id);
-            })
-            ->where('status', 'pending')
-            ->count();
-        } elseif ($user->hasRole('hr')) {
-            // HR sees leaves that a manager has already approved
-            $pendingCount = Leave::where('status', 'manager approved')->count();
-        } else {
-            $pendingCount = 0; // Default to 0 if the user doesn't have a specific role
+    if ($user->hasRole('admin')) {
+        $pendingCount = Leave::where('status', 'pending')->count();
+    } elseif ($user->hasRole('manager')) {
+        // Correctly checks the manager_id in the employees table
+        $managerEmployeeId = $users->employee->emp_id ?? null;
+        if ($managerEmployeeId) {
+            $pendingCount = Leave::whereHas('user.employee', function ($query) use ($managerEmployeeId) {
+                $query->where('manager_id', $managerEmployeeId);
+            })->where('status', 'pending')->count();
         }
-        // Team view
-        if ($view === 'team') {
-            if ($user->hasRole('hr') || $user->hasRole('admin')) {
-                // HR & Admin see all leaves
-                $allLeaves = Leave::with('user')->latest()->get();
+    } elseif ($user->hasRole('hr')) {
+        // HR sees leaves that a manager has already approved
+        $pendingCount = Leave::where('status', 'manager approved')->count();
+    }
 
-                return view('leaves.index', [
-                    'leaves' => $allLeaves,
-                    'user' => $user,
-                    'view' => 'team',
-                    'pendingCount' => $pendingCount,
-                ]);
-            } elseif ($user->hasRole('Manager')) {
-                // Manager sees only their team leaves
-                $teamLeaves = Leave::with('user')
-                    ->whereHas(
-                        'user',
-                        fn($q) =>
-                        $q->where('manager_id', $user->employee_id)
-                    )
+    // Team view
+    if ($view === 'team') {
+        if ($user->hasRole('hr') || $user->hasRole('admin')) {
+            // HR & Admin see all leaves
+            $allLeaves = Leave::with('user.employee')->latest()->get();
+
+            return view('leaves.index', [
+                'leaves' => $allLeaves,
+                'user' => $user,
+                'view' => 'team',
+                'pendingCount' => $pendingCount,
+            ]);
+        } elseif ($user->hasRole('manager')) {
+            // Manager sees only their team leaves
+            $managerEmployeeId = $user->employee->emp_id ?? null;
+            if ($managerEmployeeId) {
+                $teamLeaves = Leave::with('user.employee')
+                    ->whereHas('user.employee', function ($query) use ($managerEmployeeId) {
+                        $query->where('manager_id', $managerEmployeeId);
+                    })
                     ->latest()
                     ->get();
-
-                return view('leaves.index', [
-                    'leaves' => $teamLeaves,
-                    'user' => $user,
-                    'view' => 'team',
-                    'pendingCount' => $pendingCount,
-                ]);
+            } else {
+                $teamLeaves = collect(); // Return an empty collection if no employee ID is found
             }
+
+            return view('leaves.index', [
+                'leaves' => $teamLeaves,
+                'user' => $user,
+                'view' => 'team',
+                'pendingCount' => $pendingCount,
+            ]);
         }
-
-        // Default: My leaves
-        $myLeaves = Leave::where('user_id', $user->id)->latest()->get();
-
-        return view('leaves.index', [
-            'leaves' => $myLeaves,
-            'user' => $user,
-            'view' => 'mine',
-            'pendingCount' => $pendingCount,
-        ]);
     }
+
+    // Default: My leaves
+    $myLeaves = Leave::where('user_id', $user->id)->latest()->get();
+
+    return view('leaves.index', [
+        'leaves' => $myLeaves,
+        'user' => $user,
+        'view' => 'mine',
+        'pendingCount' => $pendingCount,
+    ]);
+}
 
     /**
      * Show the form for creating a new resource.
@@ -207,13 +209,13 @@ class LeaveController extends Controller
         $leave->save();
 
         // ✅ Deduct leave balance (not for comp-off)
-        if ($request->leave_type !== 'comp-off') {
-            $employee = Employees::where('user_id', $user->id)->first();
-            if ($employee) {
-                $employee->leave_balance -= $request->leave_days;
-                $employee->save();
-            }
-        }
+        // if ($request->leave_type !== 'comp-off') {
+        //     $employee = Employees::where('user_id', $user->id)->first();
+        //     if ($employee) {
+        //         $employee->leave_balance -= $request->leave_days;
+        //         $employee->save();
+        //     }
+        // }
 
         return redirect()->route('leaves.index')->with('success', 'Leave request submitted.');
     }
@@ -301,21 +303,91 @@ class LeaveController extends Controller
             ->with('success', 'Leave request deleted successfully.');
     }
 
-    public function approve($id)
+    // public function approve($id)
+    // {
+    //     $leave = Leave::findOrFail($id);
+    //     $leave->manager_status = 'approved'; // or HR if HR approves
+    //     $leave->save();
+
+    //     return redirect()->route('leaves.index')->with('success', 'Leave approved successfully.');
+    // }
+
+    // public function reject($id)
+    // {
+    //     $leave = Leave::findOrFail($id);
+    //     $leave->manager_status = 'rejected'; // or HR if HR rejects
+    //     $leave->save();
+
+    //     return redirect()->route('leaves.index')->with('error', 'Leave rejected.');
+    // }
+     // MANAGER decision (approve or reject)
+    public function managerDecision(Request $request, Leave $leave)
     {
-        $leave = Leave::findOrFail($id);
-        $leave->manager_status = 'approved'; // or HR if HR approves
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+            'action'  => 'required|in:approve,reject',
+        ]);
+
+        if (Auth::user()->emp_id !== optional($leave->user)->manager_id) {
+            return back()->with('error', 'Unauthorized.');
+        }
+
+        if ($leave->status !== 'pending') {
+            return back()->with('info', 'This leave has already been processed.');
+        }
+
+        if ($request->action === 'approve') {
+            $leave->status = 'supervisor/ manager approved';
+        } elseif ($request->action === 'reject') {
+            $leave->status = 'supervisor/ manager rejected';
+            // Revert leave balance if not comp-off
+            if ($leave->leave_type !== 'comp-off') {
+                $leave->user->leave_balance += $leave->leave_days;
+                $leave->user->save();
+            }
+        }
+        // dd(Auth::user()->id);
+        $leave->approver_1 = Auth::user()->id;
+        $leave->approver_1_comments = $request->comment;
+        $leave->approver_1_approved_at = now();
         $leave->save();
 
-        return redirect()->route('leaves.index')->with('success', 'Leave approved successfully.');
+        return back()->with('success', 'Leave ' . $request->action . 'd successfully by Manager.');
     }
 
-    public function reject($id)
+    // HR decision (approve or reject)
+    public function hrDecision(Request $request, Leave $leave)
     {
-        $leave = Leave::findOrFail($id);
-        $leave->manager_status = 'rejected'; // or HR if HR rejects
+        $request->validate([
+            'comment' => 'required|string|max:1000',
+            'action'  => 'required|in:approve,reject',
+        ]);
+
+        if (!Auth::user()->hasRole('hr')) {
+            return back()->with('error', 'Unauthorized.');
+        }
+
+        if ($leave->status !== 'supervisor/ manager approved') {
+            return back()->with('info', 'Leave must be manager approved first.');
+        }
+
+        if ($request->action === 'approve') {
+            $leave->status = 'hr approved';
+        } else {
+            $leave->status = 'hr rejected';
+            // Revert leave balance if not comp-off
+            if ($leave->leave_type !== 'comp-off') {
+                $leave->user->leave_balance += $leave->leave_days;
+                $leave->user->save();
+            }
+        }
+
+        $leave->approver_2 = Auth::user()->emp_id;
+        $leave->approver_2_comments = $request->comment;
+        $leave->approver_2_approved_at = now();
+        $leave->leave_type = $request->leave_type;
         $leave->save();
 
-        return redirect()->route('leaves.index')->with('error', 'Leave rejected.');
+        return back()->with('success', 'Leave ' . $request->action . 'd successfully by HR.');
     }
 }
