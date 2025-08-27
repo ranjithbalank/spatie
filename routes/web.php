@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
+use App\Http\Controllers\CircularController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
 use App\Http\Controllers\LeaveController;
@@ -54,13 +55,17 @@ Route::middleware('auth','menu')->group(function () {
     // Holidays List
     Route::resource('holidays', HolidayController::class);
     Route::resource('internal-jobs', InternalJobPostingController::class);
-    Route::post('/internal-jobs/apply/{job}', [InternalJobPostingController::class, 'apply'])
-        ->name('internal-jobs.apply');
+    Route::post('/internal-jobs/apply/{job}', [InternalJobPostingController::class, 'apply'])->name('internal-jobs.apply');
     Route::get('/export-applicants', [InternalJobPostingController::class, 'exportApplicants'])->name('export.applicants');
     Route::get('/export-applicants-pdf', [InternalJobPostingController::class, 'exportApplicantsPdf'])->name('export.applicants.pdf');
+
     // ✅ Correct route method for file upload
     Route::post('/import-applicants-pdf', [InternalJobPostingController::class, 'uploadFinalStatus'])
         ->name('import.applicants.pdf');
+
+
+    // Circulars
+    Route::resource('/circulars',CircularController::class);
 });
 
 
