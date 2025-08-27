@@ -64,7 +64,7 @@
 
             $menus = Menu::whereIn('id', $allowedMenuIds)
                 ->whereNull('parent_id')
-                ->orderBy('order','asc')
+                ->orderBy('order', 'asc')
                 ->orderBy('name')
                 ->with([
                     'children' => function ($query) use ($allowedMenuIds) {
@@ -75,6 +75,10 @@
         @endphp
 
         @foreach ($menus as $menu)
+            {{-- For bypassing the ijp in the menu --}}
+            @if ($menu->name === 'IJP-EXPORT'|$menu->name === 'IJP-IMPORT' )
+                @continue
+            @endif
             <li>
                 <a href="{{ $menu->url }}"
                     class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->is(ltrim($menu->url, '/')) ? 'bg-gray-200 font-semibold' : '' }}">

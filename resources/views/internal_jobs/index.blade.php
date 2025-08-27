@@ -219,6 +219,9 @@
                                                                 <span class="text-white btn btn-success">Selected</span>
                                                             @elseif($applicant->status == 'rejected' || $applicant->status == 'Rejected')
                                                                 <span class="text-white btn btn-danger ">Rejected</span>
+                                                            @else
+                                                                <span class="btn btn-light text-black">Something went
+                                                                    Wrong</span>
                                                             @endif
                                                         <td>
                                                             @if ($applicant->resume_path)
@@ -276,62 +279,54 @@
                             </div>
 
                             {{-- Job Applicants --}}
+                            {{-- Job Applicants --}}
                             @hasanyrole(['hr', 'admin'])
                                 <div class="tab-pane fade" id="applicants-tab-pane">
-                                    {{-- Blade: Export Form + Job Filter --}}
+                                    {{-- Filter + Export --}}
                                     <div class="d-flex justify-content-between align-items-end mb-3 flex-wrap">
-                                        <!-- 🔍 Left: Filter -->
-                                        <span class="text-warning">*This section will only show the Applied Status</span>
-                                        <div class="input-group me-2" style="max-width: 400px;">
-                                            <select class="form-select" id="jobFilter">
-                                                <option value="">Filter by Job (Only for Applied Status)</option>
+                                        <form method="GET" action="{{ route('internal-jobs.index') }}"
+                                            class="d-flex align-items-center gap-2">
+                                            <select name="job_id" class="form-select" style="max-width:300px;">
+                                                <option value="">-- All Jobs --</option>
                                                 @foreach ($jobs as $job)
-                                                    @if ($job->status !== 'inactive' )
-                                                        <option value="{{ $job->id }}">IJP - {{ $job->id }} |
-                                                            {{ $job->job_title }}</option>
-                                                    @endif
+                                                    <option value="{{ $job->id }}"
+                                                        {{ request('job_id') == $job->id ? 'selected' : '' }}>
+                                                        IJP - {{ $job->id }} | {{ $job->job_title }}
+                                                    </option>
                                                 @endforeach
-
                                             </select>
-                                            <button class="btn btn-outline-primary" type="button"
-                                                onclick="filterApplicants()">Search</button>
-                                        </div>
+                                            <button type="submit" class="btn btn-outline-primary">Search</button>
+                                            <a href="{{ route('internal-jobs.index') }}"
+                                                class="btn btn-outline-secondary">Reset</a>
+                                        </form>
 
-                                        <!-- 📁 Right: Export -->
-                                        <form method="GET" action="{{ route('export.applicants') }}"
-                                            onsubmit="return handleExportSubmit();">
-                                            <input type="hidden" name="job_id" id="exportJobId">
+                                        <form method="GET" action="{{ route('export.applicants') }}">
+                                            <input type="hidden" name="job_id" value="{{ request('job_id') }}">
                                             <button type="submit" class="btn btn-outline-success p-2">
                                                 <i class="bi bi-arrow-down-circle"></i> Download as Excel
                                             </button>
                                         </form>
                                     </div>
 
+                                    {{-- Applicants Table --}}
                                     <div class="table-responsive">
                                         <table id="applicantsTable"
                                             class="table table-bordered table-light align-middle text-center w-100">
-
                                             <thead class="table-light align-middle text-center">
                                                 <tr>
-                                                    <th style="width: 50px;">S.No</th>
-                                                    <th style="width: 100px;">IJP ID</th>
-                                                    <th style="width: 200px;">Job Title</th>
-                                                    <th style="width: 180px;">Applicant</th>
-                                                    <th style="width: 220px;">Email</th>
-                                                    <th style="width: 220px;">Status</th>
-                                                    <th style="width: 120px;">Resume</th>
+                                                    <th>S.No</th>
+                                                    <th>IJP ID</th>
+                                                    <th>Job Title</th>
+                                                    <th>Applicant</th>
+                                                    <th>Email</th>
+                                                    <th>Status</th>
+                                                    <th>Resume</th>
                                                 </tr>
                                             </thead>
-
-
                                             <tbody>
-                                                @php
-                                                    $counter = 1;
-                                                    $hasApplied = $applicants->where('status', 'applied')->count() > 0;
-                                                @endphp
+                                                @php $counter = 1; @endphp
                                                 @foreach ($applicants as $applicant)
-                                                    {{-- @if ($applicant->status == 'applied') --}}
-                                                    @if ($hasApplied && $applicant->status == 'applied')
+                                                    @if ($applicant->status == 'applied')
                                                         <tr>
                                                             <td>{{ $counter++ }}</td>
                                                             <td>IJP - {{ $applicant->job->id ?? '-' }}</td>
@@ -341,55 +336,18 @@
                                                             <td>
                                                                 @if ($applicant->status == 'applied')
                                                                     <span class="text-white btn btn-primary">Applied</span>
-                                                                @elseif($applicant->status == 'selected' || $applicant->status == 'Selected')
+                                                                @elseif(strtolower($applicant->status) == 'selected')
                                                                     <span class="text-white btn btn-success">Selected</span>
-                                                                @elseif($applicant->status == 'rejected' || $applicant->status == 'Rejected')
-                                                                    <span class="text-white btn btn-danger ">Rejected</span>
+                                                                @elseif(strtolower($applicant->status) == 'rejected')
+                                                                    <span class="text-white btn btn-danger">Rejected</span>
                                                                 @endif
                                                             </td>
                                                             <td>
                                                                 @if ($applicant->resume_path)
-                                                                    <button class="btn btn-sm btn-primary"
-                                                                        data-bs-toggle="modal"
-                                                                        data-bs-target="#resumeModal{{ $applicant->id }}">
-                                                                        <i class="bi bi-file-earmark-text"></i>
-                                                                    </button>
-
-                                                                    <div class="modal fade"
-                                                                        id="resumeModal{{ $applicant->id }}" tabindex="-1"
-                                                                        aria-hidden="true">
-                                                                        <div
-                                                                            class="modal-dialog modal-xl modal-dialog-centered">
-                                                                            <div class="modal-content">
-                                                                                <div class="modal-header text-white"
-                                                                                    style="background: linear-gradient(90deg, #fc4a1a, #f7b733);">
-                                                                                    <h5 class="modal-title">
-                                                                                        Resume –
-                                                                                        {{ $applicant->user->name ?? '' }}
-                                                                                        - For the
-                                                                                        {{ $applicant->job->job_title ?? '' }}
-                                                                                        position
-                                                                                    </h5>
-                                                                                    <button type="button" class="btn-close"
-                                                                                        data-bs-dismiss="modal"></button>
-                                                                                </div>
-                                                                                <div class="modal-body p-0">
-                                                                                    <iframe
-                                                                                        src="{{ asset('storage/' . $applicant->resume_path) }}"
-                                                                                        width="100%" height="600px"
-                                                                                        style="border: none;"></iframe>
-                                                                                </div>
-                                                                                <div
-                                                                                    class="modal-footer d-flex justify-content-end">
-                                                                                    <a href="{{ asset('storage/' . $applicant->resume_path) }}"
-                                                                                        class="btn btn-success" download>
-                                                                                        <i class="bi bi-download"></i> Download
-                                                                                        Resume
-                                                                                    </a>
-                                                                                </div>
-                                                                            </div>
-                                                                        </div>
-                                                                    </div>
+                                                                    <a href="{{ asset('storage/' . $applicant->resume_path) }}"
+                                                                        target="_blank" class="btn btn-sm btn-primary">
+                                                                        <i class="bi bi-file-earmark-text"></i> View
+                                                                    </a>
                                                                 @else
                                                                     <span class="text-muted">No Resume</span>
                                                                 @endif
@@ -401,6 +359,8 @@
                                         </table>
                                     </div>
                                 </div>
+                                {{-- @endhasanyrole --}}
+
                                 {{-- Final Job Status Results Tab --}}
                                 <div class="tab-pane fade" id="results-tab-pane">
                                     <div class="table-responsive">
@@ -443,6 +403,7 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            {{-- @dump($results); --}}
                                             @php $count = 1; @endphp
                                             @foreach ($results as $result)
                                                 <tr>
@@ -451,13 +412,19 @@
                                                     <td>{{ ucfirst($result->job_title) }}</td>
                                                     <td>{{ $result->applicant }}</td>
                                                     <td>{{ $result->email }}</td>
-                                                    <td>{{ $result->interview_date }}</td>
+                                                    <td>{{ $result->interview_date ? \Carbon\Carbon::parse($result->joining_date)->format('d-m-Y') : '-NA-' }}
+                                                    </td>
                                                     {{-- <td>{{ $result->qualifications }}</td> --}}
                                                     {{-- <td>{{ $result->experience }}</td> --}}
-                                                    <td>{{ ucfirst($result->interview_panel) }}</td>
+                                                    <td>{{ $result->interview_panel ? ucfirst($result->interview_panel) : 'NA' }}
+                                                    </td>
+
                                                     <td>
                                                         @if ($result->status == 'applied')
                                                             <span class="text-white btn btn-primary">Applied</span>
+                                                        @elseif($result->status == '' || $result->status == '')
+                                                            <span class="btn btn-light text-black">Something went
+                                                                Wrong</span>
                                                         @elseif($result->status == 'selected' || $result->status == 'Selected')
                                                             <span class="text-white btn btn-success">Selected</span>
                                                         @elseif($result->status == 'rejected' || $result->status == 'Rejected')
@@ -465,8 +432,12 @@
                                                         @endif
                                                     </td>
                                                     {{-- <td>{{ $result->interview_result }}</td> --}}
-                                                    <td>{{ \Carbon\Carbon::parse($result->joining_date)->format('d-m-Y') }}
+
+                                                    <td>
+                                                        {{ $result->joining_date ? \Carbon\Carbon::parse($result->joining_date)->format('d-m-Y') : '-NA-' }}
                                                     </td>
+
+
                                                 </tr>
                                             @endforeach
                                         </tbody>
@@ -480,130 +451,4 @@
         </div>
     </div>
     </div>
-@endsection
-
-@section('scripts')
-    {{-- DataTables JS --}}
-    <script src="https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js"></script>
-    <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
-
-    <script>
-        $(document).ready(function() {
-            const jobsTable = $('#ticketsTable').DataTable({
-                responsive: true
-            });
-            const applicantsTable = $('#applicantsTable').DataTable({
-                responsive: true
-            });
-            const myappTable = $('#myappTable').DataTable({
-                responsive: true
-            });
-            const resultTable = $('#resultTable').DataTable({
-                responsive: true
-            });
-            const finalTable = $('#finalTable').DataTable({
-                responsive: true
-            });
-
-            // Add column-specific search for applicants
-            $('#applicantsTable thead tr:eq(1) th').each(function(i) {
-                $('input', this).on('keyup change', function() {
-                    if (applicantsTable.column(i).search() !== this.value) {
-                        applicantsTable.column(i).search(this.value).draw();
-                    }
-                });
-            });
-        });
-    </script>
-    <script>
-        function handleExportSubmit() {
-            const selectedJobId = document.getElementById('jobFilter').value;
-            const exportInput = document.getElementById('exportJobId');
-
-            if (!selectedJobId) {
-                alert("⚠️ Please select a Job ID before exporting.");
-                return false; // Prevent submission
-            }
-
-            exportInput.value = selectedJobId;
-            console.log("✅ Submitting Export for Job ID:", selectedJobId);
-            return true;
-        }
-
-        function filterApplicants() {
-            const selectedJobId = document.getElementById('jobFilter').value;
-            const rows = document.querySelectorAll('#applicantsTable tbody tr');
-            let counter = 1;
-
-            rows.forEach(row => {
-                const jobIdCell = row.cells[1].textContent.trim();
-                if (selectedJobId === "" || jobIdCell.includes(`IJP - ${selectedJobId}`)) {
-                    row.style.display = "";
-                    row.cells[0].textContent = counter++;
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-            // Optional: update export field right after filtering
-            document.getElementById('exportJobId').value = selectedJobId;
-        }
-    </script>
-
-
-    {{-- <script>
-        function updateJobId() {
-            const selectedJobId = document.getElementById('jobFilter').value;
-            document.getElementById('exportJobId').value = selectedJobId;
-            console.log("🔄 Updated exportJobId to:", selectedJobId);
-        }
-
-        function checkExportJobId() {
-            const jobId = document.getElementById('exportJobId').value;
-            alert("🧪 Exporting Job ID: " + jobId); // 👈 This will show a popup before download
-            return true;
-        }
-
-        function filterApplicants() {
-            const selectedJobId = document.getElementById('jobFilter').value;
-            const rows = document.querySelectorAll('#applicantsTable tbody tr');
-            let counter = 1;
-
-            rows.forEach(row => {
-                const jobIdCell = row.cells[1].textContent.trim();
-                if (selectedJobId === "" || jobIdCell.includes(`IJP - ${selectedJobId}`)) {
-                    row.style.display = "";
-                    row.cells[0].textContent = counter++;
-                } else {
-                    row.style.display = "none";
-                }
-            });
-
-            updateJobId(); // 🛠 Ensure hidden field is in sync
-        }
-
-        function confirmExport() {
-            const selectedJobId = document.getElementById('exportJobId').value;
-            console.log("📤 Export button clicked. Sending Job ID:", selectedJobId);
-            return true;
-        }
-    </script> --}}
-    {{-- <script>
-        // This ensures the hidden input is updated **just before form is submitted**
-        function handleExportSubmit(event) {
-            const selectedJobId = document.getElementById('jobFilter').value;
-            const exportInput = document.getElementById('exportJobId');
-
-            if (!selectedJobId) {
-                alert("Please select a Job ID before exporting.");
-                return false;
-            }
-
-            exportInput.value = selectedJobId;
-
-            console.log("✅ Exporting Job ID:", selectedJobId); // Debug
-            return true;
-        }
-    </script> --}}
-
 @endsection

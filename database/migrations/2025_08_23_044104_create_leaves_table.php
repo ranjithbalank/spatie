@@ -11,32 +11,7 @@ return new class extends Migration
      */
     public function up(): void
     {
-        // Schema::create('leaves', function (Blueprint $table) {
-
-        //     $table->id();
-        //     $table->foreignId('emp_id')->constrained('employees_details')->onDelete('cascade'); // Employee
-        //     $table->date('start_date');
-        //     $table->date('end_date');
-        //     $table->integer('total_days');
-        //     $table->text('reason')->nullable();
-
-        //     // Stage 1: Manager Approval
-        //     $table->enum('manager_status', ['pending', 'approved', 'rejected'])->default('pending');
-        //     $table->foreignId('manager_id')->nullable()->constrained('employees_details')->nullOnDelete();
-        //     $table->timestamp('manager_action_at')->nullable();
-        //     $table->text('manager_remark')->nullable();
-
-        //     // Stage 2: HR Approval (role-based, no hr_id)
-        //     $table->enum('hr_status', ['pending', 'approved', 'rejected'])->default('pending');
-        //     $table->timestamp('hr_action_at')->nullable();
-        //     $table->text('hr_remark')->nullable();
-
-        //     // HR Decides Leave Type
-        //     $table->enum('leave_type', ['sick', 'casual', 'paid', 'unpaid', 'maternity', 'other'])->nullable();
-
-        //     $table->timestamps();
-        // });
-           Schema::create('leaves', function (Blueprint $table) {
+        Schema::create('leaves', function (Blueprint $table) {
             $table->id();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
 
@@ -53,8 +28,9 @@ return new class extends Migration
             $table->text('reason')->nullable();
 
             // Approver details & comments
-            $table->text('approver_1')->nullable(); // usually manager name or ID
-            $table->text('approver_2')->nullable(); // usually HR/Admin name or ID
+            // Use unsignedBigInteger for foreign keys
+            $table->unsignedBigInteger('approver_1')->nullable(); // usually manager name or ID
+            $table->unsignedBigInteger('approver_2')->nullable(); // usually HR/Admin name or ID
 
             $table->timestamp('approver_1_approved_at')->nullable();
             $table->timestamp('approver_2_approved_at')->nullable();
@@ -64,16 +40,27 @@ return new class extends Migration
 
             // Single status column to track workflow
             $table->enum('status', [
-                'pending',                      // waiting for manager
-                'supervisor/ manager approved', // manager approved, waiting for HR
+                'pending',
+                'supervisor/ manager approved',
                 'supervisor/ manager rejected',
                 'hr approved',
                 'hr rejected',
             ])->default('pending');
 
             $table->timestamps();
-        });
 
+            // Define foreign key constraints after the columns are created
+            // This now references the 'id' column on the 'users' table
+            $table->foreign('approver_1')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
+
+            $table->foreign('approver_2')
+                ->references('id')
+                ->on('users')
+                ->onDelete('set null');
+        });
     }
 
     /**

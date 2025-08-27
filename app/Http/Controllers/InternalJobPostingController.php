@@ -20,24 +20,44 @@ class InternalJobPostingController extends Controller // ✅ correct class name
     /**
      * Display a listing of the resource.
      */
-    public function index()
-    {
-        $jobs = InternalJobPostings::all();
-        $applications = InternalJobApplications::where('employee_id', Auth::id())->pluck('job_id')->toArray();
-        $user = Auth::user();
-        $results = FinalJobStatus::all();
-        // Load applicants
-        if ($user->hasAnyRole(['hr', 'admin'])) {
-            $applicants = InternalJobApplications::with(['user', 'job'])->get();
-        } else {
-            // 👇 Only load the current user's own applications
-            $applicants = InternalJobApplications::with(['user', 'job'])
-                ->where('employee_id', $user->id)
-                ->get();
-        }
-        // dd($applicants);
-        return view('internal_jobs.index', compact('jobs', 'applications', 'user', 'applicants','results'));
+    public function index(Request $request)
+{
+    $user = Auth::user();
+
+    // All jobs for dropdown
+    $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+
+    // Jobs applied by the current user
+    $applications = InternalJobApplications::where('employee_id', $user->id)
+        ->pluck('job_id')
+        ->toArray();
+
+    // Final status results
+    $results = FinalJobStatus::with('job', 'user')->get();
+
+    // Base applicants query
+    $applicantsQuery = InternalJobApplications::with(['user', 'job'])->latest();
+
+    if (!$user->hasAnyRole(['hr', 'admin'])) {
+        $applicantsQuery->where('employee_id', $user->id);
     }
+
+    // Apply filter if job_id selected
+    if ($request->filled('job_id')) {
+        $applicantsQuery->where('job_id', $request->job_id);
+    }
+
+    $applicants = $applicantsQuery->get();
+
+    return view('internal_jobs.index', compact(
+        'jobs',
+        'applications',
+        'user',
+        'applicants',
+        'results'
+    ));
+}
+
 
     /**
      * Show the form for creating a new resource.
@@ -182,16 +202,27 @@ class InternalJobPostingController extends Controller // ✅ correct class name
     {
         $applications = FinalJobStatus::with('job', 'user')->get();
         $pdf = Pdf::loadView('internal_jobs.export', compact('applications'))->setPaper('A4', 'landscape');
-        return $pdf->download('internal_job_applicants.pdf');
+        $filename = $job->job_title . '_IJP.pdf';
+        return $pdf->download('filename');
     }
 
 
     public function exportApplicants(Request $request)
     {
         $jobId = $request->query('job_id');
-        // dd($jobId);
-        return \Maatwebsite\Excel\Facades\Excel::download(new JobApplicantsExport($jobId), 'internal_job_applicants.xlsx');
-    }
+
+        // Fetch the job details
+        $job = InternalJobPostings::findOrFail($jobId);
+
+        // Create a nice filename like "Software_Engineer_IJP.xlsx"
+        $filename = str_replace(' ', '_', $job->job_title) . '_IJP.xlsx';
+
+        return \Maatwebsite\Excel\Facades\Excel::download(
+            new JobApplicantsExport($jobId),
+            $filename
+        );
+}
+
 
 
     public function uploadFinalStatus(Request $request)

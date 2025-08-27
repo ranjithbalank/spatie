@@ -20,6 +20,7 @@ class JobApplicantsExport implements FromCollection, WithHeadings, WithStyles
 
     public function collection()
     {
+
         return InternalJobApplications::with('job', 'user')
             ->when($this->jobId, fn($query) => $query->where('job_id', $this->jobId))
             ->get()
