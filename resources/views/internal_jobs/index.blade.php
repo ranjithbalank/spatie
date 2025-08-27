@@ -1,40 +1,37 @@
-@extends('layouts.app')
+<x-app-layout>
+    <x-slot name="header">
+        <div class="flex justify-between items-center w-full mb-4">
+            <h2 class="font-semibold text-xl text-black-800 leading-tight">
+                {{ __('Employees Details') }}
+            </h2>
 
-@section('title', 'Internal Job Posting')
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
+        </div>
+        <hr class="mb-4">
+        <div class="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-4 mb-4">
+            <div class="row justify-content-center w-full">
+                <div class="col-md-12">
+                    @if (session('error'))
+                        <div class="alert alert-danger m-3 alert-dismissible fade show">
+                            {{ session('error') }}
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
 
-{{-- DataTables CSS --}}
-@section('styles')
-    <link rel="stylesheet" href="https://cdn.datatables.net/2.3.2/css/dataTables.bootstrap5.min.css">
-@endsection
+                    @if (session('warnings') && count(session('warnings')))
+                        <div class="alert alert-warning m-3 alert-dismissible fade show">
+                            <strong>⚠️ Warnings:</strong>
+                            <ul class="mb-0">
+                                @foreach (session('warnings') as $warning)
+                                    <li>{{ $warning }}</li>
+                                @endforeach
+                            </ul>
+                            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+                        </div>
+                    @endif
+                    {{-- <div class="card shadow"> --}}
 
-@section('content')
-    <div class="container">
-        <div class="row justify-content-center">
-            <div class="col-md-12">
-                @if (session('error'))
-                    <div class="alert alert-danger m-3 alert-dismissible fade show">
-                        {{ session('error') }}
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-
-                @if (session('warnings') && count(session('warnings')))
-                    <div class="alert alert-warning m-3 alert-dismissible fade show">
-                        <strong>⚠️ Warnings:</strong>
-                        <ul class="mb-0">
-                            @foreach (session('warnings') as $warning)
-                                <li>{{ $warning }}</li>
-                            @endforeach
-                        </ul>
-                        <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                    </div>
-                @endif
-                <div class="card shadow">
-                    <div class="card-header text-white d-flex justify-content-between align-items-center"
-                        style="background: linear-gradient(90deg, #fc4a1a, #f7b733);">
-                        Internal Job Posting
-                        <a href="{{ route('dashboard') }}" class="btn btn-sm btn-light text-dark">← Back</a>
-                    </div>
                     <div class="card-body">
                         {{-- Tabs --}}
                         <ul class="nav nav-tabs mb-3" id="jobTabs" role="tablist">
@@ -72,7 +69,8 @@
                             <div class="tab-pane fade show active" id="jobs-tab-pane">
                                 <div class="d-flex justify-content-end mb-3">
                                     @hasanyrole(['hr', 'admin'])
-                                        <a href="{{ route('internal-jobs.create') }}" class="btn btn-success btn-sm shadow-sm">
+                                        <a href="{{ route('internal-jobs.create') }}"
+                                            class="btn btn-success btn-sm shadow-sm">
                                             <i class="bi bi-plus-circle"></i> Create New Job
                                         </a>
                                     @endhasanyrole
@@ -115,7 +113,8 @@
                                                             </span>
                                                         </td>
                                                         <td class="text-center">
-                                                            <button class="btn btn-sm btn-info" data-bs-toggle="offcanvas"
+                                                            <button class="btn btn-sm btn-info"
+                                                                data-bs-toggle="offcanvas"
                                                                 data-bs-target="#offcanvasBottom{{ $job->id }}">
                                                                 <i class="bi bi-eye"></i>
                                                             </button>
@@ -146,7 +145,8 @@
                                                 <ul class="dropdown-menu dropdown-menu-end">
                                                     <li>
                                                         <button type="submit" class="dropdown-item text-success">
-                                                            <i class="bi bi-file-earmark-excel"></i> Download as Excel
+                                                            <i class="bi bi-file-earmark-excel"></i> Download as
+                                                            Excel
                                                         </button>
                                                     </li>
                                                     <li>
@@ -216,11 +216,14 @@
                                                             @if ($applicant->status == 'applied')
                                                                 <span class="text-white btn btn-primary">Applied</span>
                                                             @elseif($applicant->status == 'selected' || $applicant->status == 'Selected')
-                                                                <span class="text-white btn btn-success">Selected</span>
+                                                                <span
+                                                                    class="text-white btn btn-success">Selected</span>
                                                             @elseif($applicant->status == 'rejected' || $applicant->status == 'Rejected')
-                                                                <span class="text-white btn btn-danger ">Rejected</span>
+                                                                <span
+                                                                    class="text-white btn btn-danger ">Rejected</span>
                                                             @else
-                                                                <span class="btn btn-light text-black">Something went
+                                                                <span class="btn btn-light text-black">Something
+                                                                    went
                                                                     Wrong</span>
                                                             @endif
                                                         <td>
@@ -232,8 +235,8 @@
                                                                 </button>
 
                                                                 <div class="modal fade"
-                                                                    id="resumeModal{{ $applicant->id }}" tabindex="-1"
-                                                                    aria-hidden="true">
+                                                                    id="resumeModal{{ $applicant->id }}"
+                                                                    tabindex="-1" aria-hidden="true">
                                                                     <div
                                                                         class="modal-dialog modal-xl modal-dialog-centered">
                                                                         <div class="modal-content">
@@ -246,7 +249,8 @@
                                                                                     {{ $applicant->job->job_title ?? '' }}
                                                                                     position
                                                                                 </h5>
-                                                                                <button type="button" class="btn-close"
+                                                                                <button type="button"
+                                                                                    class="btn-close"
                                                                                     data-bs-dismiss="modal"></button>
                                                                             </div>
                                                                             <div class="modal-body p-0">
@@ -259,7 +263,8 @@
                                                                                 class="modal-footer d-flex justify-content-end">
                                                                                 <a href="{{ asset('storage/' . $applicant->resume_path) }}"
                                                                                     class="btn btn-success" download>
-                                                                                    <i class="bi bi-download"></i> Download
+                                                                                    <i class="bi bi-download"></i>
+                                                                                    Download
                                                                                     Resume
                                                                                 </a>
                                                                             </div>
@@ -337,7 +342,8 @@
                                                                 @if ($applicant->status == 'applied')
                                                                     <span class="text-white btn btn-primary">Applied</span>
                                                                 @elseif(strtolower($applicant->status) == 'selected')
-                                                                    <span class="text-white btn btn-success">Selected</span>
+                                                                    <span
+                                                                        class="text-white btn btn-success">Selected</span>
                                                                 @elseif(strtolower($applicant->status) == 'rejected')
                                                                     <span class="text-white btn btn-danger">Rejected</span>
                                                                 @endif
@@ -384,7 +390,8 @@
 
                                     </div>
                                     <br>
-                                    <table id="finalTable" class="table table-bordered table-hover align-middle text-center">
+                                    <table id="finalTable"
+                                        class="table table-bordered table-hover align-middle text-center">
                                         <thead class="table-light">
                                             <tr>
                                                 <th>#</th>
@@ -449,6 +456,5 @@
                 </div>
             </div>
         </div>
-    </div>
-    </div>
-@endsection
+    </x-slot>
+</x-app-layout>

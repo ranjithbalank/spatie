@@ -45,8 +45,11 @@ Route::middleware('auth','menu')->group(function () {
     Route::resource("units",UnitController::class);
     Route::resource('departments',DepartmentController::class);
     Route::resource("users",UserController::class);
+    // designations
     Route::resource("designations",DesignationController::class);
+    // employees
     Route::resource('employees',EmployeeController::class);
+
     // Approval routes
     // Route::resource('leaves',LeaveController::class);
     // Route::post('leaves/{leave}/manager-decision', [LeaveController::class, 'managerDecision'])->name('leaves.manager.decision');
@@ -62,7 +65,6 @@ Route::middleware('auth','menu')->group(function () {
     // ✅ Correct route method for file upload
     Route::post('/import-applicants-pdf', [InternalJobPostingController::class, 'uploadFinalStatus'])
         ->name('import.applicants.pdf');
-
 
     // Circulars
     Route::resource('/circulars',CircularController::class);
