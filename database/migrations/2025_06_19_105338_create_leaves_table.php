@@ -6,9 +6,6 @@ use Illuminate\Support\Facades\Schema;
 
 return new class extends Migration
 {
-    /**
-     * Run the migrations.
-     */
     public function up(): void
     {
         Schema::create('leaves', function (Blueprint $table) {
@@ -28,9 +25,8 @@ return new class extends Migration
             $table->text('reason')->nullable();
 
             // Approver details & comments
-            // Use unsignedBigInteger for foreign keys
-            $table->unsignedBigInteger('approver_1')->nullable(); // usually manager name or ID
-            $table->unsignedBigInteger('approver_2')->nullable(); // usually HR/Admin name or ID
+            $table->text('approver_1')->nullable(); // usually manager name or ID
+            $table->text('approver_2')->nullable(); // usually HR/Admin name or ID
 
             $table->timestamp('approver_1_approved_at')->nullable();
             $table->timestamp('approver_2_approved_at')->nullable();
@@ -40,32 +36,17 @@ return new class extends Migration
 
             // Single status column to track workflow
             $table->enum('status', [
-                'pending',
-                'supervisor/ manager approved',
+                'pending',                      // waiting for manager
+                'supervisor/ manager approved', // manager approved, waiting for HR
                 'supervisor/ manager rejected',
                 'hr approved',
                 'hr rejected',
             ])->default('pending');
 
             $table->timestamps();
-
-            // Define foreign key constraints after the columns are created
-            // This now references the 'id' column on the 'users' table
-            $table->foreign('approver_1')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
-
-            $table->foreign('approver_2')
-                ->references('id')
-                ->on('users')
-                ->onDelete('set null');
         });
     }
 
-    /**
-     * Reverse the migrations.
-     */
     public function down(): void
     {
         Schema::dropIfExists('leaves');

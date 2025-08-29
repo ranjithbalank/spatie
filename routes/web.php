@@ -15,6 +15,7 @@ use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\DepartmentController;
 use App\Http\Controllers\DesignationController;
+use App\Http\Controllers\LeaveExportController;
 use App\Http\Controllers\Admin\PermissionController;
 use App\Http\Controllers\InternalJobPostingController;
 use App\Http\Controllers\MenuRolePermissionController;
@@ -66,6 +67,13 @@ Route::middleware('auth','menu')->group(function () {
     // ✅ Correct route method for file upload
     Route::post('/import-applicants-pdf', [InternalJobPostingController::class, 'uploadFinalStatus'])
         ->name('import.applicants.pdf');
+
+    //leaves
+    Route::resource("/leaves",LeaveController::class);
+    Route::post('leaves/{leave}/manager-decision', [LeaveController::class, 'managerDecision'])->name('leaves.manager.decision');
+    Route::post('leaves/{leave}/hr-decision', [LeaveController::class, 'hrDecision'])->name('leaves.hr.decision');
+    Route::get('/leaves/export/excel', [LeaveExportController::class, 'exportExcel'])->name('leaves.export.excel');
+    Route::get('/leaves/export/pdf', [LeaveExportController::class, 'exportPDF'])->name('leaves.export.pdf');
 
     // Circulars
     Route::resource('/circulars',CircularController::class);
