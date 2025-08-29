@@ -3,13 +3,14 @@
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\MenuController;
-use App\Http\Controllers\CircularController;
 use App\Http\Controllers\UnitController;
 use App\Http\Controllers\UserController;
+use App\Http\Controllers\EventController;
 use App\Http\Controllers\LeaveController;
 
 use App\Http\Controllers\HolidayController;
 use App\Http\Controllers\ProfileController;
+use App\Http\Controllers\CircularController;
 use App\Http\Controllers\EmployeeController;
 use App\Http\Controllers\Admin\RoleController;
 use App\Http\Controllers\DepartmentController;
@@ -68,6 +69,13 @@ Route::middleware('auth','menu')->group(function () {
 
     // Circulars
     Route::resource('/circulars',CircularController::class);
+
+    //events
+    Route::resource('events', EventController::class);
+    Route::get('/events-data', [EventController::class, 'fetchEvents'])->name('events.data');
+
+
+    Route::get('/events/daily/{date}', [EventController::class, 'dailyEvents'])->name('events.daily');
 });
 
 
