@@ -22,12 +22,12 @@
                 </a>
             @endcan
 
-            <form method="GET" action="{{ route('users.index') }}" class="flex items-end gap-2 w-full sm:w-1/3">
+            <form method="GET" action="{{ route('users.index') }}" class="flex items-end gap-2 w-75">
                 <input type="text" name="search" placeholder="Search Users..." value="{{ request('search') }}"
-                    class="px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1" />
+                    class="px-2 py-2 border border-gray-300 rounded-md focus:outline-none focus:ring-2 focus:ring-indigo-500 flex-1 w-25" />
 
                 <select name="role_id"
-                    class="px-3 py-2 border border-gray-300 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500">
+                    class="px-3 py-2 border border-gray-300 w-full rounded focus:outline-none focus:ring-2 focus:ring-indigo-500 w-25">
                     <option value="">All Roles</option>
                     @foreach ($roles as $role)
                         <option value="{{ $role->id }}" {{ request('role_id') == $role->id ? 'selected' : '' }}>

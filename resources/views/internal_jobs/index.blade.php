@@ -2,7 +2,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center w-full mb-4">
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
-                {{ __('Employees Details') }}
+                {{ __('Internal Job Postings ') }}
             </h2>
 
             <a href="#" class="text-sm text-red-700 no-underline"
@@ -95,7 +95,7 @@
                                         <tbody>
                                             @php $count = 1; @endphp
                                             @foreach ($jobs as $job)
-                                                @if ($job->status === 'active' || Auth::user()->hasAnyRole(['HR', 'Admin']))
+                                                @if ($job->status === 'active' || Auth::user()->hasAnyRole(['hr', 'admin']))
                                                     <tr>
                                                         <td>{{ $count++ }}</td>
                                                         <td>IJP - {{ $job->id }}</td>
@@ -108,7 +108,7 @@
                                                         </td>
                                                         <td class="text-center">
                                                             <span
-                                                                class="btn btn-sm {{ $job->status === 'active' ? 'btn-success' : 'btn-secondary' }}">
+                                                                class="btn btn-sm btn-primary fw-bold {{ $job->status === 'active' }}">
                                                                 {{ ucfirst($job->status) }}
                                                             </span>
                                                         </td>
@@ -118,7 +118,7 @@
                                                                 data-bs-target="#offcanvasBottom{{ $job->id }}">
                                                                 <i class="bi bi-eye"></i>
                                                             </button>
-                                                            @hasanyrole(['Admin|HR'])
+                                                            @hasanyrole(['admin|hr'])
                                                                 <a href="{{ route('internal-jobs.edit', $job->id) }}"
                                                                     class="btn btn-sm btn-warning">
                                                                     <i class="bi bi-pencil-square"></i>

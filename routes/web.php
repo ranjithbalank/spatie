@@ -36,6 +36,7 @@ Route::get('/admin', function () {
 })->middleware(['auth', 'role:admin'])->name('admin.index');
 
 Route::middleware('auth','menu')->group(function () {
+
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
@@ -81,8 +82,6 @@ Route::middleware('auth','menu')->group(function () {
     //events
     Route::resource('events', EventController::class);
     Route::get('/events-data', [EventController::class, 'fetchEvents'])->name('events.data');
-
-
     Route::get('/events/daily/{date}', [EventController::class, 'dailyEvents'])->name('events.daily');
 });
 

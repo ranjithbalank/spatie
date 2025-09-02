@@ -23,9 +23,31 @@ class InternalJobPostingController extends Controller // ✅ correct class name
     public function index(Request $request)
 {
     $user = Auth::user();
+    // Check each job's end date and set a new 'status' attribute
+     $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+
+    $today = now()->format('Y-m-d');
+    foreach ($jobs as $job) {
+    // Get today's date and the job's end date as Carbon objects
+    $today = now();
+    $endDate = \Carbon\Carbon::parse($job->end_date);
+
+    // Check if the end date is in the past
+    // The `isPast()` method returns true if the date is before the current moment.
+    // Check if the end date is in the past.
+    // If the HR has specifically marked the job as inactive, it should be closed regardless of the date.
+    if ($job->status === 'inactive') {
+        $job->status = 'Closed';
+    } elseif ($endDate->isBefore(today())) {
+        $job->status = 'Registration closed';
+    } else {
+        $job->status = 'active';
+    }
+}
+
 
     // All jobs for dropdown
-    $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+    // $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
 
     // Jobs applied by the current user
     $applications = InternalJobApplications::where('employee_id', $user->id)

@@ -1,14 +1,24 @@
 <x-app-layout>
     <x-slot name="header">
-        <h2 class="font-semibold text-xl text-gray-800 leading-tight">
-            {{ __('Leave Application') }}
-        </h2>
-
-
-        <div class="py-12">
-            <div class="max-w-4xl mx-auto sm:px-6 lg:px-8">
-                <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-                    <div class="p-6 text-gray-900">
+         <div class="flex justify-between items-center w-full mb-4">
+            <h2 class="font-semibold text-xl text-black-800 leading-tight">
+                {{ __('Apply Leaves') }}
+            </h2>
+            <a href="#" class="text-sm text-red-700 no-underline"
+                onclick="window.history.back(); return false;">&larr; Back</a>
+        </div>
+        <hr class="mb-4">
+        {{-- This section correctly displays general session errors --}}
+        @if (session('error'))
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
+        @endif
+        <div class="py-3 w-50">
+            {{-- <div class="max-w-4xl mx-auto"> --}}
+                {{-- <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg"> --}}
+                    <div class="text-gray-900">
 
                         <form method="POST" action="{{ route('leaves.store') }}">
                             @csrf
@@ -18,6 +28,10 @@
                                 <label for="from_date" class="block text-sm font-medium text-gray-700">From Date</label>
                                 <input type="date" name="from_date" id="from_date"
                                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                {{-- ADD THIS SECTION --}}
+                                @error('from_date')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- To Date -->
@@ -25,6 +39,10 @@
                                 <label for="to_date" class="block text-sm font-medium text-gray-700">To Date</label>
                                 <input type="date" name="to_date" id="to_date"
                                     class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
+                                {{-- ADD THIS SECTION --}}
+                                @error('to_date')
+                                    <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                                @enderror
                             </div>
 
                             <!-- Leave Days (Auto-calculated) -->
@@ -75,12 +93,25 @@
 
                 function setMinDates() {
                     const today = new Date();
-                    const minDate = today.toISOString().split("T")[0];
+                    // Calculate the date from 7 days ago
+                    const sevenDaysAgo = new Date();
+                    sevenDaysAgo.setDate(today.getDate() - 7);
+
+                    // Format dates to "YYYY-MM-DD"
+                    const minDate = sevenDaysAgo.toISOString().split("T")[0];
+                    const maxDate = today.toISOString().split("T")[0];
+
+                    // Assuming 'fromDate' and 'toDate' are your input elements
                     fromDate.setAttribute("min", minDate);
+                    // fromDate.setAttribute("max", maxDate);
+
                     toDate.setAttribute("min", minDate);
+                    // toDate.setAttribute("max", maxDate);
                 }
 
+                // fromDate and toDate event listeners and calculateLeaveDays function remain the same.
                 fromDate.addEventListener("change", function() {
+                    // The toDate's min attribute should still be dependent on the fromDate selection
                     toDate.min = fromDate.value;
                     calculateLeaveDays();
                 });

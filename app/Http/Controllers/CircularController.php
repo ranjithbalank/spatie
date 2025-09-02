@@ -38,7 +38,7 @@ class CircularController extends Controller
         $request->validate([
             'circular_number' => 'required|string|max:255',
             'circular_date' => 'required|date',
-            'circular_file' => 'required|file|mimes:pdf|max:5120', // max 5MB
+            'circular_file' => 'required|file|mimes:pdf', // max 5MB
         ]);
 
         // Check if a file is uploaded

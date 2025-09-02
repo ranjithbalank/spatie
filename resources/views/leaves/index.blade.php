@@ -32,7 +32,7 @@
                                 <li class="nav-item">
                                     <a class="nav-link {{ request()->get('view') === 'team' ? 'active' : '' }}"
                                         href="{{ route('leaves.index', ['view' => 'team']) }}">
-                                        {{ auth()->user()->hasRole('Admin') ? 'All Leaves' : 'Leave Approvals' }}
+                                        {{ auth()->user()->hasRole('admin') ? 'All Leaves' : 'Leave Approvals' }}
                                         @if (!empty($pendingCount) && $pendingCount > 0)
                                             <span class="badge bg-danger ms-1">{{ $pendingCount }}</span>
                                         @endif
