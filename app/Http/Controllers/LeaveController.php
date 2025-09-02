@@ -406,7 +406,7 @@ class LeaveController extends Controller
             }
         }
 
-        $leave->approver_1 = Auth::user()->employee_id;
+        $leave->approver_1 = Auth::user()->employees->emp_id;
         $leave->approver_1_comments = $request->comment;
         $leave->approver_1_approved_at = now();
         $leave->save();
@@ -441,7 +441,7 @@ class LeaveController extends Controller
             }
         }
 
-        $leave->approver_2 = Auth::user()->employee_id;
+        $leave->approver_2 = Auth::user()->employees->emp_id;
         $leave->approver_2_comments = $request->comment;
         $leave->approver_2_approved_at = now();
         $leave->leave_type = $request->leave_type;

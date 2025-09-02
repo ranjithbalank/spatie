@@ -83,7 +83,8 @@
                                 <div class="card border-success h-100">
                                     <div class="card-body text-start p-3">
                                         <strong><em> Supervisor/Manager Name: </em></strong>
-                                        <b> <span class="text-primary">Mr. / Ms. {{ $leave->approver1->name }}</span></b>
+                                        <b> <span class="text-primary">Mr. / Ms.
+                                                {{ $leave->approver1->emp_name }}</span></b>
                                         <small class="text-muted d-block mt-2">
                                             Approved At:
                                             <b>{{ \Carbon\Carbon::parse($leave->approver_1_approved_at)->format('d-m-Y H:i A') }}</b>
@@ -101,7 +102,8 @@
                                 <div class="card border-primary h-100">
                                     <div class="card-body text-start p-3">
                                         <strong><em> HR Name: </em></strong>
-                                        <b> <span class="text-primary">Mr. / Ms. {{ $leave->approver2?->name ?? 'N/A' }}</span></b>
+                                        <b> <span class="text-primary">Mr. / Ms.
+                                                {{ $leave->approver2->emp_name }}</span></b>
                                         <small class="text-muted d-block mt-2">
                                             Approved At:
                                             <b>{{ \Carbon\Carbon::parse($leave->approver_2_approved_at)->format('d-m-Y H:i A') }}</b>
@@ -117,7 +119,22 @@
                 </div>
 
                 {{-- ✅ Manager approval form --}}
-                @if (auth()->user()->hasRole('manager') && $leave->status === 'pending')
+                @if (auth()->user()->hasRole('manager') && $leave->status === 'pending' && auth()->user()->id !== $leave->user_id)
+                    <form action="{{ route('leaves.manager.decision', $leave) }}" method="POST" class="mb-3">
+                        @csrf
+                        <div class="mb-2">
+                            <textarea name="comment" class="form-control" placeholder="Manager comment" rows="2" required></textarea>
+                        </div>
+                        <div class="d-flex gap-2">
+                            <button type="submit" name="action" value="approve" class="btn btn-success btn-sm">
+                                ✅ Approve
+                            </button>
+                            <button type="submit" name="action" value="reject" class="btn btn-danger btn-sm">
+                                ❌ Reject
+                            </button>
+                        </div>
+                    </form>
+                @elseif(auth()->user()->employees->emp_id === auth()->user()->employees->manager_id && $leave->status === 'pending')
                     <form action="{{ route('leaves.manager.decision', $leave) }}" method="POST" class="mb-3">
                         @csrf
                         <div class="mb-2">
@@ -182,7 +199,6 @@
                         </div>
                     </form>
                 @endif
-
             </div>
         </div>
     </div>
