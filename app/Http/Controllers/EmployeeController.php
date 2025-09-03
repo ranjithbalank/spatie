@@ -25,7 +25,7 @@ class EmployeeController extends Controller
         $employees = Employees::query()
             ->leftJoin('designations', 'employees_details.designation_id', '=', 'designations.id')
             ->when($search, function ($query) use ($search) {
-                $query->where('employees_details.employee_name', 'like', "%{$search}%")
+                $query->where('employees_details.emp_name', 'like', "%{$search}%")
                     ->orWhere('employees_details.emp_id', 'like', "%{$search}%")
                     ->orWhere('employees_details.manager_id', 'like', "%{$search}%");
             })

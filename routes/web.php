@@ -29,7 +29,8 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified', 'check.status'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
-
+    Route::get('import', [UserController::class, 'import_csv'])->name('users.import_form');
+    Route::post('import', [UserController::class, 'import'])->name('users.import');
 
 Route::get('/admin', function () {
     return view('admin.index');
@@ -37,27 +38,28 @@ Route::get('/admin', function () {
 
 Route::middleware('auth','menu')->group(function () {
 
+    // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
     Route::patch('/profile', [ProfileController::class, 'update'])->name('profile.update');
     Route::delete('/profile', [ProfileController::class, 'destroy'])->name('profile.destroy');
-
+    // roles
     Route::resource("roles", RoleController::class);
+    // permissions
     Route::resource("permissions", PermissionController::class);
+    // menus
     Route::resource('menus', MenuController::class);
+    // menu-permission
     Route::resource('menu-permission', MenuRolePermissionController::class);
+    // units
     Route::resource("units",UnitController::class);
+    // departments
     Route::resource('departments',DepartmentController::class);
+    // users
     Route::resource("users",UserController::class);
     // designations
     Route::resource("designations",DesignationController::class);
     // employees
     Route::resource('employees',EmployeeController::class);
-
-    // Approval routes
-    // Route::resource('leaves',LeaveController::class);
-    // Route::post('leaves/{leave}/manager-decision', [LeaveController::class, 'managerDecision'])->name('leaves.manager.decision');
-    // Route::post('leaves/{leave}/hr-decision', [LeaveController::class, 'hrDecision'])->name('leaves.hr.decision');
-
     // Holidays List
     Route::resource('holidays', HolidayController::class);
     Route::resource('internal-jobs', InternalJobPostingController::class);

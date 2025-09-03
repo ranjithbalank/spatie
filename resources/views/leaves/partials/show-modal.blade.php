@@ -134,7 +134,7 @@
                             </button>
                         </div>
                     </form>
-                @elseif(auth()->user()->employees->emp_id === auth()->user()->employees->manager_id && $leave->status === 'pending')
+                @elseif(optional(auth()->user()->employees)->emp_id === optional(auth()->user()->employees)->manager_id && $leave->status === 'pending')
                     <form action="{{ route('leaves.manager.decision', $leave) }}" method="POST" class="mb-3">
                         @csrf
                         <div class="mb-2">

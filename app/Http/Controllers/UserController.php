@@ -2,11 +2,13 @@
 
 namespace App\Http\Controllers;
 
-use App\Models\Employees;
 use App\Models\User;
+use App\Models\Employees;
 use Illuminate\Http\Request;
+use App\Imports\EmployeesImport;
 use Spatie\Permission\Models\Role;
 use Illuminate\Support\Facades\Hash;
+use Maatwebsite\Excel\Facades\Excel;
 
 
 class UserController extends Controller
@@ -54,29 +56,29 @@ class UserController extends Controller
      * Store a newly created resource in storage.
      */
     public function store(Request $request)
-{
-    // Validate the incoming request data
-    $validated = $request->validate([
-        'name' => 'required|string|max:255',
-        'email' => 'required|string|email|max:255|unique:users',
-        'password' => 'required|string|min:8|confirmed',
-        'role' => 'required|exists:roles,id',
-    ]);
+    {
+        // Validate the incoming request data
+        $validated = $request->validate([
+            'name' => 'required|string|max:255',
+            'email' => 'required|string|email|max:255|unique:users',
+            'password' => 'required|string|min:8|confirmed',
+            'role' => 'required|exists:roles,id',
+        ]);
 
-    // Create the user
-    $user = new User;
-    $user->name = $validated['name'];
-    $user->email = $validated['email'];
-    $user->password = Hash::make($validated['password']);
-    $user->role_id = $validated['role'];
-    $user->save();
-    $role = Role::findById($validated['role']);
-    $user->assignRole($role->name);
-    Employees::updateOrCreate(
-            ['emp_name' => $validated['name']]);
-    // Redirect to the users list with a success message
-    return redirect()->route('users.index')->with('success', 'User created successfully!');
-}
+        // Create the user
+        $user = new User;
+        $user->name = $validated['name'];
+        $user->email = $validated['email'];
+        $user->password = Hash::make($validated['password']);
+        $user->role_id = $validated['role'];
+        $user->save();
+        $role = Role::findById($validated['role']);
+        $user->assignRole($role->name);
+        Employees::updateOrCreate(
+                ['emp_name' => $validated['name']]);
+        // Redirect to the users list with a success message
+        return redirect()->route('users.index')->with('success', 'User created successfully!');
+    }
 
     /**
      * Display the specified resource.
@@ -137,7 +139,7 @@ class UserController extends Controller
     /**
      * Remove the specified resource from storage.
      */
-   public function destroy(string $id)
+    public function destroy(string $id)
     {
         // delete dependent details
         \App\Models\Employees::where('emp_id', $id)->delete();
@@ -146,6 +148,26 @@ class UserController extends Controller
         \App\Models\User::where('id', $id)->delete();
 
         return back()->with('success', 'Employee deleted successfully.');
+    }
+
+     public function import_csv()
+    {
+        return view('users.import');
+    }
+
+    public function import(Request $request)
+    {
+        // @dd($request->all());
+        $request->validate([
+            'file' => 'required|mimes:xlsx,xls,csv'
+        ]);
+
+        try {
+            Excel::import(new EmployeesImport, $request->file('file'));
+            return back()->with('success', 'Employees imported successfully!');
+        } catch (\Exception $e) {
+            return back()->with('error', 'Error during import: ' . $e->getMessage());
+        }
     }
 
 }
