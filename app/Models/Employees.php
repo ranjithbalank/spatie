@@ -34,8 +34,18 @@ class Employees extends Model
         return $this->belongsTo(Designation::class, 'designation_id');
     }
     public function managedEmployees()
+    {
+        return $this->hasMany(Employees::class, 'manager_id');
+    }
+
+    public function manager()
+    {
+        // employee belongs to one manager (who is also an employee)
+        return $this->belongsTo(Employees::class, 'manager_id','emp_id');
+    }
+    public function subordinates()
 {
-    return $this->hasMany(Employees::class, 'manager_id', 'id');
+    return $this->hasMany(Employees::class, 'manager_id');
 }
 public function users()
 {

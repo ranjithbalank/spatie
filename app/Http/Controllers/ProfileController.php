@@ -15,13 +15,16 @@ class ProfileController extends Controller
     /**
      * Display the user's profile form.
      */
-    public function edit(Request $request): View
+    public function edit(Request $request)
     {
+        $user = $request->user()->load('employees.manager'); // eager load manager of this employee
 
-        return view('profile.edit', [
-            'user' => $request->user(),
-        ]);
+        // Get all employees for dropdown (all potential managers)
+        $employees = Employees::with('user')->get();
+
+        return view('profile.edit', compact('user', 'employees'));
     }
+
 
     /**
      * Update the user's profile information.
