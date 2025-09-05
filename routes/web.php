@@ -60,8 +60,11 @@ Route::middleware('auth','menu')->group(function () {
     Route::resource("designations",DesignationController::class);
     // employees
     Route::resource('employees',EmployeeController::class);
+
     // Holidays List
     Route::resource('holidays', HolidayController::class);
+
+    // Internal Job Postings
     Route::resource('internal-jobs', InternalJobPostingController::class);
     Route::post('/internal-jobs/apply/{job}', [InternalJobPostingController::class, 'apply'])->name('internal-jobs.apply');
     Route::get('/export-applicants', [InternalJobPostingController::class, 'exportApplicants'])->name('export.applicants');
@@ -85,6 +88,9 @@ Route::middleware('auth','menu')->group(function () {
     Route::resource('events', EventController::class);
     Route::get('/events-data', [EventController::class, 'fetchEvents'])->name('events.data');
     Route::get('/events/daily/{date}', [EventController::class, 'dailyEvents'])->name('events.daily');
+
+    // Feedback
+    Route::resource('feedback', \App\Http\Controllers\FeedbackController::class);
 });
 
 
