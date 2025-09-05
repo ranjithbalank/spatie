@@ -9,6 +9,7 @@
                         <x-application-logo class="h-9 w-auto fill-current text-gray-800" />
                         <span class="font-bold text-lg text-gray-800">DMW CNC SOLUTIONS</span>
                     </a>
+                    <span class="text-sm text-gray-500 fw-bold">(Version - Prerelease)</span>
                 </div>
 
 

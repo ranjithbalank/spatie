@@ -10,46 +10,6 @@
             </a>
         </li>
 
-        <!-- Admin Only Menus -->
-        @role('admin')
-            {{-- <li>
-                <a href="{{ route('admin.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('admin.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Admin
-                </a>
-            </li> --}}
-            {{-- <li>
-                <a href="{{ route('roles.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('roles.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Roles
-                </a>
-            </li> --}}
-            {{-- <li>
-                <a href="{{ route('permissions.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('permissions.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Permissions
-                </a>
-            </li> --}}
-            {{-- <li>
-                <a href="{{ route('menus.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('menus.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Menu Items
-                </a>
-            </li> --}}
-            {{-- <li>
-                <a href="{{ route('departments.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('departments.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Departments
-                </a>
-            </li> --}}
-            {{-- <li>
-                <a href="{{ route('menu-permission.index') }}"
-                    class="block px-4 py-2 rounded hover:bg-gray-200 {{ request()->routeIs('menu-permission.*') ? 'bg-gray-200 font-semibold' : '' }}">
-                    Menu Permissions
-                </a>
-            </li> --}}
-        @endrole
-
         <!-- Dynamic Menus based on Role Permissions -->
         @php
             use App\Models\MenuRolePermission;
@@ -76,7 +36,7 @@
 
         @foreach ($menus as $menu)
             {{-- For bypassing the ijp in the menu --}}
-            @if ($menu->name === 'IJP-EXPORT'|$menu->name === 'IJP-IMPORT' )
+            @if (($menu->name === 'IJP-EXPORT') | ($menu->name === 'IJP-IMPORT'))
                 @continue
             @endif
             <li>
