@@ -53,13 +53,18 @@
 
                 <!-- Feedback Text Area -->
                 <div class="mb-3">
-                    <label for="feedback_text" class="form-label">Feedback</label>
-                    <textarea name="feedback_text" id="feedback_text" rows="4" required class="form-control"></textarea>
+                    <label for="feedback_type" class="form-label">Feedback Type</label>
+                    <select name="feedback_type" id="feedback_type" required class="form-control">
+                        <option value="">Select Feedback Type</option>
+                        <option value="ticket">Issue / Ticket </option>
+                        <option value="feedback">Feedback</option>
+                        <option value="suggestion">Suggestion</option>
+                    </select>
                 </div>
 
                 <!-- Areas of Improvement Text Area -->
                 <div class="mb-3">
-                    <label for="areas_of_improvement" class="form-label">Areas of Improvement</label>
+                    <label for="areas_of_improvement" class="form-label">Comments</label>
                     <textarea name="areas_of_improvement" id="areas_of_improvement" rows="4" class="form-control"></textarea>
                 </div>
         </div>

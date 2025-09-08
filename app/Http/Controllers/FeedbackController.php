@@ -32,14 +32,14 @@ class FeedbackController extends Controller
         // @dd($request->all());
         // 1. Validate the incoming request data
         $request->validate([
-            'feedback_text' => 'required|string',
-            'areas_of_improvement' => 'nullable|string',
+            'feedback_type' => 'required|string',
+            'areas_of_improvement' => 'required|string',
         ]);
 
         // 2. Create and save the new Feedback record
         Feedback::create([
             'user_id' => $request->emp_id, // Associate feedback with the authenticated user
-            'feedback_text' => $request->feedback_text,
+            'feedback_text' => $request->feedback_type,
             'areas_of_improvement' => $request->areas_of_improvement,
         ]);
 
