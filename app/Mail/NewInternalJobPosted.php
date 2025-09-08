@@ -17,7 +17,7 @@ class NewInternalJobPosted extends Mailable
 
     public function build()
     {
-        return $this->subject('New Internal Job Posting Available')
+        return $this->subject('New Internal Job Posted: ' . $this->job->job_title)
                     ->view('emails.internal_job_posted');
     }
 }

@@ -3,11 +3,14 @@
 namespace App\Http\Controllers;
 
 
-use Illuminate\Http\Request;
+use App\Models\User;
 
+use Illuminate\Http\Request;
 use App\Models\FinalJobStatus;
 use Barryvdh\DomPDF\Facade\Pdf;
 use App\Imports\FinalStatusImport;
+use App\Jobs\SendInternalJobEmail;
+use Illuminate\Support\Facades\Bus;
 use App\Exports\JobApplicantsExport;
 use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
@@ -110,7 +113,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             'status' => 'required|string|in:active,inactive',
         ]);
 
-        InternalJobPostings::create([
+        $job=InternalJobPostings::create([
             'job_title' => $request->job_title,
             'job_description' => $request->job_description,
             'qualifications' => $request->qualification,
@@ -122,9 +125,48 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
+        // Dispatch the job to send emails to google.com users
+        $users = User::all();
+        $jobs = [];
+
+        // Get emails from users with google.com or dmw.com domains
+        $emails = \App\Models\User::whereNotNull('email')
+            ->where(function($query) {
+                $query->where('email', 'like', '%@google.com')
+                    ->orWhere('email', 'like', '%@dmw.com')
+                    ->orWhere('email', 'like', '%@dmwindia.com');
+            })
+            ->pluck('email')
+            ->toArray();
+
+        // Check if we found any valid emails
+        if (empty($emails)) {
+            return redirect()->route('internal-jobs.index')
+                ->with('error', 'No google.com or dmw.com email addresses found. Cancelling internal job posting notification.');
+        }
+
+        // Get users with valid email domains for job notifications
+        $validUsers = \App\Models\User::whereNotNull('email')
+            ->where(function($query) {
+                $query->where('email', 'like', '%@google.com')
+                    ->orWhere('email', 'like', '%@dmw.com')
+                     ->orWhere('email', 'like', '%@dmwindia.com');
+            })
+            ->get();
+
+        // Create job notifications for valid users only
+        foreach ($validUsers as $user) {
+            $jobs[] = new SendInternalJobEmail($user, $job);
+        }
+
+        // Dispatch the batch job
+        Bus::batch($jobs)
+            ->name('Notify users about IJP: ' . $job->job_title)
+            ->dispatch();
 
         return redirect()->route('internal-jobs.index')
-                         ->with('success', 'Job posting created successfully!');
+            ->with('success', 'Job posting created successfully!');
+
     }
 
     public function show(string $id)
