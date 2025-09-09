@@ -21,7 +21,7 @@ class EmployeeController extends Controller
     public function index(Request $request)
     {
         $search = $request->input('search');
-
+        $users = User::all();
         $employees = Employees::query()
             ->leftJoin('designations', 'employees_details.designation_id', '=', 'designations.id')
             ->when($search, function ($query) use ($search) {
@@ -33,7 +33,7 @@ class EmployeeController extends Controller
             ->orderBy('designations.designation_name', 'asc')
             ->paginate(5);
 
-        return view("employees.index", compact("search", 'employees'));
+        return view("employees.index", compact("search", 'employees','users'));
     }
 
     /**
@@ -56,7 +56,7 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-        // dd($request->all());
+        dd($request->all());
         // 1. Validate the incoming request data
         $validated_data = $request->validate([
             "emp_id" => "required|string|max:255|unique:employees_details,emp_id",
@@ -71,7 +71,7 @@ class EmployeeController extends Controller
             "doj" => "nullable|date",
             "dor" => "nullable|date|after_or_equal:doj",
             "dob"=> "nullable|date",
-            // "leave_balance" => "nullable|integer|min:0", // This rule is commented out.
+            "leave_balance" => "nullable|integer|min:0", // This rule is commented out.
             "status" => "required|string|in:active,inactive",
             "email" => "required|email|unique:users,email",
             "password" => "required|string|min:8",
@@ -83,6 +83,7 @@ class EmployeeController extends Controller
                 'name' => $validated_data['emp_name'],
                 'email' => $validated_data['email'],
                 'password' => Hash::make($validated_data['password']),
+                'leave_balance' => $validated_data['leave_balance'] ?? 0, // Default to 0 if not provided
             ]);
 
             // 3. Add the new user's ID to the validated data for the employee
@@ -121,8 +122,8 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
-         $employee = Employees::findOrFail($id);
-
+        $employee = Employees::findOrFail($id);
+        $user = $employee->user;
         // Fetch all the data needed for the form dropdowns
         $units = Unit::all();
         $employees = Employees::all(); // This is for the manager dropdown
@@ -130,7 +131,7 @@ class EmployeeController extends Controller
         $designations = Designation::all();
 
         // Pass all the data to the view
-        return view('employees.create', compact('employee', 'units', 'employees', 'departments', 'designations'));
+        return view('employees.create', compact('employee', 'units', 'employees', 'departments', 'designations', 'user'));
     }
     /**
      * Update the specified resource in storage.
@@ -152,7 +153,7 @@ class EmployeeController extends Controller
             "designation_id" => "nullable|integer|exists:designations,id",
             "doj" => "nullable|date",
             "dor" => "nullable|date|after_or_equal:doj",
-            // "leave_balance" => "nullable|integer|min:0",
+            "leave_balance" => "nullable|string|min:0",
             "status" => "required|string|in:active,inactive",
             "email" => [
                 "required",
@@ -161,18 +162,20 @@ class EmployeeController extends Controller
             ],
             "password" => "nullable|string|min:8|confirmed",
         ]);
-
+        // @dd($user->leave_balance);
         try {
             // Update User
             $user->name = $validated_data['emp_name'];
             $user->email = $validated_data['email'];
+            $user->leave_balance = $validated_data['leave_balance'];
+            $user->status = $validated_data['status'];
             if ($request->filled('password')) {
                 $user->password = Hash::make($validated_data['password']);
             }
             $user->save();
 
             // Update Employee (exclude emp_id)
-            $employee->fill(collect($validated_data)->except(['email', 'password'])->toArray());
+            $employee->fill(collect($validated_data)->except(['email', 'password',"leave_balance"])->toArray());
             $employee->updated_by = Auth::id();
             $employee->save();
 

@@ -214,13 +214,13 @@
                     @enderror
                 </div>
             </div>
-
+            {{-- @dd($users); --}}
             {{-- Leave + Status --}}
             <div class="grid grid-cols-1 md:grid-cols-2 gap-4 w-25">
                 <div>
                     <label for="leave_balance" class="block text-sm font-medium text-gray-700">Leave Balance</label>
                     <input type="number" min="0" id="leave_balance" name="leave_balance"
-                        value="{{ old('leave_balance', $employee->leave_balance ?? 20) }}"
+                        value="{{ old('leave_balance', $user->leave_balance ?? 20) }}"
                         class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
                     @error('leave_balance')
                         <p class="mt-1 text-xs text-red-600">{{ $message }}</p>
