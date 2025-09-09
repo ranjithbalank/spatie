@@ -56,7 +56,7 @@ class EmployeeController extends Controller
 
     public function store(Request $request)
     {
-        dd($request->all());
+        // dd($request->all());
         // 1. Validate the incoming request data
         $validated_data = $request->validate([
             "emp_id" => "required|string|max:255|unique:employees_details,emp_id",
@@ -83,7 +83,7 @@ class EmployeeController extends Controller
                 'name' => $validated_data['emp_name'],
                 'email' => $validated_data['email'],
                 'password' => Hash::make($validated_data['password']),
-                'leave_balance' => $validated_data['leave_balance'] ?? 0, // Default to 0 if not provided
+                'leave_balance' => $validated_data['leave_balance'] , // Default to 0 if not provided
             ]);
 
             // 3. Add the new user's ID to the validated data for the employee
@@ -92,7 +92,8 @@ class EmployeeController extends Controller
             // 4. Add created_by and updated_by fields
             $validated_data['created_by'] = Auth::id();
             $validated_data['updated_by'] = Auth::id();
-
+            // Unset the 'leave_balance' key directly from the array
+            unset($validated_data['leave_balance']);    
             // 5. Create the Employee record, linked to the new user
             // Ensure your Employees model is configured with a fillable array
             $employee = Employees::create($validated_data);

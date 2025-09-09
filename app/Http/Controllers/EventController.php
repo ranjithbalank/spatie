@@ -23,8 +23,8 @@ class EventController extends Controller
             return [
                 'id'     => $event->id,
                 'title'  => $event->title,
-                'start'  => $event->start,
-                'end'    => $event->end,
+                'start' => $isAllDay ? $start->toDateString() : $start->toIso8601String(),
+                'end' => $isAllDay ? $end->toDateString() : $end->toIso8601String(),
                 'color'  => $event->color,
                 'allDay' => $isAllDay,
             ];
@@ -32,7 +32,6 @@ class EventController extends Controller
 
         return view('events.index', compact('events', 'userRole')); // 👈 pass userRole to the Blade
     }
-
 
     public function fetchEvents()
     {
@@ -46,8 +45,8 @@ class EventController extends Controller
                 'id' => $event->id,
                 'title' => $event->title,
                 'description' => $event->description, // extendedProps are fine
-                'start' => $event->start,
-                'end' => $event->end,
+                'start' => $isAllDay ? $start->toDateString() : $start->toIso8601String(),
+                'end' => $isAllDay ? $end->toDateString() : $end->toIso8601String(),
                 'color' => $event->color,
                 'allDay' => $isAllDay, // Add the allDay property
             ];
@@ -91,7 +90,7 @@ class EventController extends Controller
             'end' => $validated['end_date'],
         ]);
 
-    return redirect()->route('events.index')->with('success', 'Event added successfully!');
+        return redirect()->route('events.index')->with('success', 'Event added successfully!');
 
     }
 
@@ -100,7 +99,8 @@ class EventController extends Controller
         $event->delete();
         return response()->json(['success' => true]);
     }
-      public function dailyEvents($date)
+
+    public function dailyEvents($date)
     {
         try {
             // Validate the date format.

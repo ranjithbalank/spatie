@@ -36,7 +36,7 @@
 
         @foreach ($menus as $menu)
             {{-- For bypassing the ijp in the menu --}}
-            @if (($menu->name === 'IJP-EXPORT') | ($menu->name === 'IJP-IMPORT'))
+            @if (($menu->name === 'IJP-EXPORT') | ($menu->name === 'IJP-IMPORT') | ($menu->name === 'events-data'))
                 @continue
             @endif
             <li>

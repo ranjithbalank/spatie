@@ -121,38 +121,60 @@
                         <form action="{{ route('internal-jobs.apply', $job->id) }}" method="POST"
                             enctype="multipart/form-data">
                             @csrf
-                            <!-- Your form fields here -->
                             <div hidden>{{ $job->id }} </div>
                             <div class="mb-3">
                                 <label for="applicant_name_{{ $job->id }}" class="form-label">Applicant
                                     Name</label>
                                 <input type="text" name="applicant_name" class="form-control"
                                     value="{{ $user->name }}" readonly>
-
                             </div>
                             <div class="mb-3">
                                 <label for="emp_qualifications{{ $job->id }}"
                                     class="form-label">Qualification</label>
                                 <input type="text" name="emp_qualifications"
-                                    id="emp_qualifications{{ $job->id }}" class="form-control" required>
+                                    id="emp_qualifications{{ $job->id }}"
+                                    class="form-control @error('emp_qualifications') is-invalid @enderror"
+                                    value="{{ old('emp_qualifications') }}" required>
+                                @error('emp_qualifications')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="emp_experience{{ $job->id }}" class="form-label">Experience</label>
                                 <input type="text" name="emp_experience" id="emp_experience{{ $job->id }}"
-                                    class="form-control" required>
+                                    class="form-control @error('emp_experience') is-invalid @enderror"
+                                    value="{{ old('emp_experience') }}" required>
+                                @error('emp_experience')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label for="resume{{ $job->id }}" class="form-label">Upload Resume /
                                     Certificate</label>
                                 <input type="file" name="emp_file" id="resume{{ $job->id }}"
-                                    class="form-control" required>
+                                    class="form-control @error('emp_file') is-invalid @enderror" required>
+                                @error('emp_file')
+                                    <div class="invalid-feedback">
+                                        {{ $message }}
+                                    </div>
+                                @enderror
                             </div>
                             <div class="mb-3">
                                 <label class="form-label">Are you really Interested?</label>
                                 <div class="form-check form-switch">
-                                    <input class="form-check-input" type="checkbox" name="is_interested"
-                                        id="is_interested{{ $job->id }}" value="yes" required>
+                                    <input class="form-check-input @error('is_interested') is-invalid @enderror"
+                                        type="checkbox" name="is_interested" id="is_interested{{ $job->id }}"
+                                        value="yes" required>
                                     <label class="form-check-label" for="is_interested{{ $job->id }}">Yes</label>
+                                    @error('is_interested')
+                                        <div class="invalid-feedback">
+                                            {{ $message }}
+                                        </div>
+                                    @enderror
                                 </div>
                             </div>
                             <button type="submit" class="btn btn-success">Submit Application</button>
@@ -169,3 +191,39 @@
         </div>
     </div>
 </div>
+@push('scripts')
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Check if there are any validation errors
+            @if ($errors->any())
+                const offcanvasElement = document.getElementById('offcanvasBottom{{ $job->id }}');
+                if (offcanvasElement) {
+                    // Manually show the offcanvas
+                    const offcanvas = new bootstrap.Offcanvas(offcanvasElement);
+                    offcanvas.show();
+
+                    // Create and show a toast
+                    const toastPlacement = document.createElement('div');
+                    toastPlacement.className = 'toast-container position-fixed bottom-0 end-0 p-3';
+                    document.body.appendChild(toastPlacement);
+
+                    const toastHtml = `
+                    <div class="toast text-white bg-danger border-0" role="alert" aria-live="assertive" aria-atomic="true">
+                        <div class="d-flex">
+                            <div class="toast-body">
+                                ⚠️ Please fix the highlighted errors in the form.
+                            </div>
+                            <button type="button" class="btn-close btn-close-white me-2 m-auto" data-bs-dismiss="toast" aria-label="Close"></button>
+                        </div>
+                    </div>`;
+
+                    toastPlacement.innerHTML = toastHtml;
+                    const toastEl = toastPlacement.querySelector('.toast');
+                    const toast = new bootstrap.Toast(toastEl);
+                    toast.show();
+                }
+            @endif
+        });
+    </script>
+@endpush
