@@ -126,7 +126,7 @@ class LeaveController extends Controller
 
         $rules = [
             // 'leave_type' => 'required|in:casual,sick,earned,comp-off,od,permission',
-            // 'leave_duration' => 'required|in:Full Day,Half Day',
+            'leave_duration' => 'required|in:Full Day,Half Day',
             'leave_days' => 'required|numeric|min:0.5',
             'reason' => 'required|string|max:1000',
         ];

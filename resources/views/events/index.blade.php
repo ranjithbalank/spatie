@@ -159,7 +159,7 @@
                         headerToolbar: {
                             left: 'prev,next today',
                             center: 'title',
-                            right: 'dayGridMonth'
+                            right: 'dayGridMonth,timeGridWeek,timeGridDay'
                         },
                         dateClick: function(info) {
                             loadDailyEvents(info.dateStr);
@@ -258,6 +258,12 @@
                             })
                             .then(res => res.json())
                             .then(event => {
+
+                                // Close the offcanvas first
+                                if (offcanvasInstance) {
+                                    offcanvasInstance.hide();
+                                }
+
                                 calendar.addEvent({
                                     id: event.id,
                                     title: event.title,
@@ -268,8 +274,9 @@
                                         description: event.description
                                     }
                                 });
-                                bootstrap.Offcanvas.getInstance(document.getElementById('addEventOffcanvas'))
-                                    .hide();
+                                // Reset the form
+                                document.getElementById('addEventForm').reset();
+                                // Reload daily events to reflect the new addition 
                                 loadDailyEvents(event.start.slice(0, 10));
                             })
                             .catch(error => console.error('Error creating event:', error));

@@ -25,7 +25,9 @@
                         <tr>
                             <th>Leave Type</th>
                             <td>
-                                @if ($leave->leave_type == 'N/A')
+                                @if ($leave->leave_type == 'N/A' && $leave->status == 'supervisor/ manager rejected')
+                                    <span class="text-danger">{{ 'N/A (Manager Rejected)' }}</span>
+                                @elseif ($leave->leave_type == 'N/A')
                                     <span class="text-danger">{{ 'Waiting For HR Decision' }}</span>
                                 @else
                                     {{ ucfirst($leave->leave_type) }}
@@ -134,7 +136,8 @@
                             </button>
                         </div>
                     </form>
-                @elseif(optional(auth()->user()->employees)->emp_id === optional(auth()->user()->employees)->manager_id && $leave->status === 'pending')
+                @elseif(optional(auth()->user()->employees)->emp_id === optional(auth()->user()->employees)->manager_id &&
+                        $leave->status === 'pending')
                     <form action="{{ route('leaves.manager.decision', $leave) }}" method="POST" class="mb-3">
                         @csrf
                         <div class="mb-2">
