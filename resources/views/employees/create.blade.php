@@ -73,12 +73,11 @@
             <div class="grid grid-cols-1 md:grid-cols-4 gap-4 w-75">
                 {{-- Manager --}}
                 <div>
-                    <label for="manager_id" class="block text-sm font-medium text-gray-700">Manager</label>
+                    <label for="manager_id" class="block text-sm font-medium text-gray-700 mb-1">Manager</label>
                     <select name="manager_id" id="manager_id"
-                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border">
+                        class="mt-1 block w-full rounded-md border-gray-300 shadow-sm focus:border-indigo-500 focus:ring-indigo-500 sm:text-sm p-2 border h-10 ">
                         <option value="">Select Manager</option>
                         @foreach ($employees as $emp)
-                            {{-- @dd(old('manager_id')); --}}
                             <option value="{{ $emp->emp_id }}"
                                 {{ (string) old('manager_id', $employee->manager_id ?? '') === (string) $emp->emp_id ? 'selected' : '' }}>
                                 {{ $emp->emp_name }} ({{ $emp->emp_id }})
@@ -251,6 +250,16 @@
                 </div>
             </div>
         </form>
+        <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+        <script src="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/js/select2.min.js"></script>
 
+        <script>
+            $(document).ready(function() {
+                $('#manager_id').select2();
+                $('#unit_id').select2();
+                $('#department_id').select2();
+                $('#designation_id').select2();
+            });
+        </script>
     </x-slot>
 </x-app-layout>

@@ -10,6 +10,7 @@
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.7/dist/css/bootstrap.min.css" rel="stylesheet"
         integrity="sha384-LN+7fdVzj6u52u30Kp6M/trliBMCMKTyK833zpbD+pXdCLuTusPj697FH4R/5mcr" crossorigin="anonymous">
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.13.1/font/bootstrap-icons.min.css">
+    <link href="https://cdn.jsdelivr.net/npm/select2@4.1.0-rc.0/dist/css/select2.min.css" rel="stylesheet" />
     <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.bunny.net">
     <link href="https://fonts.bunny.net/css?family=figtree:400,500,600&display=swap" rel="stylesheet" />
@@ -122,6 +123,34 @@
         /* Prevent scrolling while loading */
         body:not(.loaded) {
             overflow: hidden;
+        }
+    </style>
+    <style>
+        /* Make Select2 single select same height as Tailwind input */
+        .select2-container .select2-selection--single {
+            height: 40px !important;
+            /* Tailwind h-10 */
+            border: 1px solid #d1d5db !important;
+            /* Tailwind border-gray-300 */
+            border-radius: 0.375rem !important;
+            /* Tailwind rounded-md */
+            display: flex;
+            align-items: center;
+            padding: 0 0.5rem;
+            font-size: 0.875rem;
+            /* Tailwind text-sm */
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__rendered {
+            line-height: 38px !important;
+            /* slightly less than height */
+            color: #374151;
+            /* Tailwind text-gray-700 */
+        }
+
+        .select2-container--default .select2-selection--single .select2-selection__arrow {
+            height: 100% !important;
+            top: 0 !important;
         }
     </style>
 </head>
