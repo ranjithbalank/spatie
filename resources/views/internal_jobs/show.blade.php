@@ -142,7 +142,8 @@
                                 @enderror
                             </div>
                             <div class="mb-3">
-                                <label for="emp_experience{{ $job->id }}" class="form-label">Experience</label>
+                                <label for="emp_experience{{ $job->id }}" class="form-label">Experience (in
+                                    years)</label>
                                 <input type="text" name="emp_experience" id="emp_experience{{ $job->id }}"
                                     class="form-control @error('emp_experience') is-invalid @enderror"
                                     value="{{ old('emp_experience') }}" required>

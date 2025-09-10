@@ -86,8 +86,8 @@
                 </div>
             </div>
         </div>
-        <div class="mt-4">
+        @if ($employees instanceof \Illuminate\Pagination\LengthAwarePaginator)
             {{ $employees->links() }}
-        </div>
+        @endif
     </x-slot>
 </x-app-layout>

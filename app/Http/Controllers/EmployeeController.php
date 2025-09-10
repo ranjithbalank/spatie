@@ -9,6 +9,7 @@ use App\Models\Department;
 use App\Models\Designation;
 use Illuminate\Http\Request;
 use Illuminate\Validation\Rule;
+use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Validation\ValidationException;
@@ -22,7 +23,7 @@ class EmployeeController extends Controller
     {
         $search = $request->input('search');
         $users = User::all();
-        $employees = Employees::query()
+        $query = Employees::query()
             ->leftJoin('designations', 'employees_details.designation_id', '=', 'designations.id')
             ->when($search, function ($query) use ($search) {
                 $query->where('employees_details.emp_name', 'like', "%{$search}%")
@@ -30,9 +31,15 @@ class EmployeeController extends Controller
                     ->orWhere('employees_details.manager_id', 'like', "%{$search}%");
             })
             ->select('employees_details.*', 'designations.designation_name')
-            ->orderBy('designations.designation_name', 'asc')
-            ->paginate(5);
+            ->orderBy('designations.designation_name', 'asc');
 
+        // Check if a search query exists.
+        // If it does, get all results. If not, paginate.
+        if ($search) {
+            $employees = $query->get();
+        } else {
+            $employees = $query->paginate(10); // Changed to a more reasonable number for normal viewing
+        }
         return view("employees.index", compact("search", 'employees','users'));
     }
 
