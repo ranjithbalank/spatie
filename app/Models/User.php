@@ -27,6 +27,8 @@ class User extends Authenticatable
         'role_id',
         'leave_balance',
         'status',
+        'last_login_at', // <-- Add this line
+        'last_logout_at', // <-- Add this line
     ];
 
     /**
@@ -49,6 +51,8 @@ class User extends Authenticatable
         return [
             'email_verified_at' => 'datetime',
             'password' => 'hashed',
+            'last_login_at' => 'datetime', // <-- Add this line
+            'last_logout_at' => 'datetime', // <-- Add this line
         ];
     }
 

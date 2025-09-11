@@ -8,6 +8,7 @@ use Illuminate\Http\RedirectResponse;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\View\View;
+use App\Models\User;
 
 class AuthenticatedSessionController extends Controller
 {
@@ -27,7 +28,12 @@ class AuthenticatedSessionController extends Controller
         $request->authenticate();
 
         $request->session()->regenerate();
-
+        $user = Auth::guard('web')->user();
+        if ($user) {
+            $user->update([
+                'last_login_at' => now(),
+            ]);
+        }
         return redirect()->intended(route('dashboard', absolute: false));
     }
 
@@ -36,6 +42,17 @@ class AuthenticatedSessionController extends Controller
      */
     public function destroy(Request $request): RedirectResponse
     {
+          // Get the authenticated user before logging out
+        $user = Auth::guard('web')->user();
+
+        // Update the last_logout_at timestamp if a user is found
+        if ($user) {
+            $user->update([
+                'last_logout_at' => now(),
+            ]);
+        }
+        
+        // Log the user out and invalidate the session
         Auth::guard('web')->logout();
 
         $request->session()->invalidate();
