@@ -4,7 +4,7 @@
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
                 Calendar
                 <a href="https://drive.google.com/file/d/1qeOU-CTgYXY89osChFdAgawN0JfPiAP3/view?usp=sharing"
-                    class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
+                    target="_blank" class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 m-2" viewBox="0 0 20 20" fill="red">
                         <path fill-rule="evenodd"
                             d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7-4a1 1 0 11-2 0 1 1 0 012 0zm-2 4a1 1 0 00-1 1v2a1 1 0 001 1h2a1 1 0 001-1v-2a1 1 0 00-1-1h-2a1 1 0 00-1 1z"
@@ -101,7 +101,8 @@
         <div class="modal fade" id="dailyEventModal" tabindex="-1">
             <div class="modal-dialog modal-lg">
                 <div class="modal-content">
-                    <div class="modal-header text-white" style="background: linear-gradient(90deg, #fc4a1a, #f7b733);">
+                    <div class="modal-header text-white"
+                        style="background: linear-gradient(90deg, #fc4a1a, #f7b733);">
                         <h5 class="modal-title">Events on <span id="eventDateTitle"></span></h5>
                         <button class="btn-close" data-bs-dismiss="modal"></button>
                     </div>
