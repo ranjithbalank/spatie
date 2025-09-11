@@ -37,8 +37,7 @@ class SendInternalJobEmail implements ShouldQueue
         // Step 1: Get all users with the specified email domains
         $emails = User::whereNotNull('email')
             ->where(function ($query) {
-                $query->where('email', 'like', '%@google.com%')
-                    ->orWhere('email', 'like', '%@dmwindia.com%');
+                $query->Where('email', 'like', '%@dmwindia.com%');
             })
             ->pluck('email')
             ->toArray();
