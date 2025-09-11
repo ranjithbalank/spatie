@@ -122,12 +122,12 @@
                 </ul>
             </div>
 
-            <p>Ready to take on a new challenge?</p>
-            <p>Rush to MyDMW Portal to Apply</p>
+            <p><strong>Ready to take on a new challenge?</strong></p>
+            <p><strong>Rush to MyDMW Portal to Apply</strong></p>
             {{-- <a href="[https://your-internal-job-portal.com/jobs/](https://your-internal-job-portal.com/jobs/){{ $job->id }}"
                 class="cta-button">View & Apply Now</a> --}}
 
-            <p style="margin-top: 30px;">Best regards,<br>The HR Team</p>
+            <p style="margin-top: 30px;">Best regards,<br>The HR Team,<br>DMW CNC Solutions India</p>
         </div>
         <div class="footer">
             <p>You are receiving this email because you are a valued employee of our company. Please do not reply to

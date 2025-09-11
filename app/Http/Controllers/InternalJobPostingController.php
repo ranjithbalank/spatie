@@ -24,64 +24,64 @@ class InternalJobPostingController extends Controller // ✅ correct class name
      * Display a listing of the resource.
      */
     public function index(Request $request)
-{
-    $user = Auth::user();
-    // Check each job's end date and set a new 'status' attribute
-     $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+    {
+        $user = Auth::user();
+        // Check each job's end date and set a new 'status' attribute
+        $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
 
-    $today = now()->format('Y-m-d');
-    foreach ($jobs as $job) {
-            // Get today's date and the job's end date as Carbon objects
-            $today = now();
-            $endDate = \Carbon\Carbon::parse($job->end_date);
+        $today = now()->format('Y-m-d');
+        foreach ($jobs as $job) {
+                // Get today's date and the job's end date as Carbon objects
+                $today = now();
+                $endDate = \Carbon\Carbon::parse($job->end_date);
 
-            // Check if the end date is in the past
-            // The `isPast()` method returns true if the date is before the current moment.
-            // Check if the end date is in the past.
-            // If the HR has specifically marked the job as inactive, it should be closed regardless of the date.
-            if ($job->status === 'inactive') {
-                $job->status = 'Closed';
-            } elseif ($endDate->isBefore(today())) {
-                $job->status = 'Registration closed';
-            } else {
-                $job->status = 'active';
+                // Check if the end date is in the past
+                // The `isPast()` method returns true if the date is before the current moment.
+                // Check if the end date is in the past.
+                // If the HR has specifically marked the job as inactive, it should be closed regardless of the date.
+                if ($job->status === 'inactive') {
+                    $job->status = 'Closed';
+                } elseif ($endDate->isBefore(today())) {
+                    $job->status = 'Registration closed';
+                } else {
+                    $job->status = 'active';
+                }
             }
+
+
+        // All jobs for dropdown
+        // $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+
+        // Jobs applied by the current user
+        $applications = InternalJobApplications::where('employee_id', $user->id)
+            ->pluck('job_id')
+            ->toArray();
+
+        // Final status results
+        $results = FinalJobStatus::with('job', 'user')->get();
+
+        // Base applicants query
+        $applicantsQuery = InternalJobApplications::with(['user', 'job'])->latest();
+
+        if (!$user->hasAnyRole(['hr', 'admin'])) {
+            $applicantsQuery->where('employee_id', $user->id);
         }
 
+        // Apply filter if job_id selected
+        if ($request->filled('job_id')) {
+            $applicantsQuery->where('job_id', $request->job_id);
+        }
 
-    // All jobs for dropdown
-    // $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+        $applicants = $applicantsQuery->get();
 
-    // Jobs applied by the current user
-    $applications = InternalJobApplications::where('employee_id', $user->id)
-        ->pluck('job_id')
-        ->toArray();
-
-    // Final status results
-    $results = FinalJobStatus::with('job', 'user')->get();
-
-    // Base applicants query
-    $applicantsQuery = InternalJobApplications::with(['user', 'job'])->latest();
-
-    if (!$user->hasAnyRole(['hr', 'admin'])) {
-        $applicantsQuery->where('employee_id', $user->id);
+        return view('internal_jobs.index', compact(
+            'jobs',
+            'applications',
+            'user',
+            'applicants',
+            'results'
+        ));
     }
-
-    // Apply filter if job_id selected
-    if ($request->filled('job_id')) {
-        $applicantsQuery->where('job_id', $request->job_id);
-    }
-
-    $applicants = $applicantsQuery->get();
-
-    return view('internal_jobs.index', compact(
-        'jobs',
-        'applications',
-        'user',
-        'applicants',
-        'results'
-    ));
-}
 
 
     /**
@@ -130,9 +130,9 @@ class InternalJobPostingController extends Controller // ✅ correct class name
         // Dispatch a single job to send a bulk email to all relevant users
         // This is more efficient than dispatching a job for each user.
         SendInternalJobEmail::dispatch($job);
-        
+
         return redirect()->route('internal-jobs.index')
-            ->with('success', 'Job posting created successfully!');
+            ->with('success', 'Job posting created successfully! Notification emails are being sent to all employees with a valid company email address.');
 
     }
 
