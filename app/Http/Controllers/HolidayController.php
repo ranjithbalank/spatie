@@ -10,9 +10,17 @@ class HolidayController extends Controller
     /**
      * Display a listing of the resource.
      */
-    public function index()
+    public function index(Request $request)
     {
-        $holidays = Holiday::all();
+        $search = $request->input('search');
+
+        $holidays = Holiday::when($search, function ($query, $search) {
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('date', 'like', "%{$search}%");
+        })
+        ->orderBy('date', 'asc')
+        ->paginate(5);
+        
         return view('holidays.index', compact('holidays'));
     }
 
