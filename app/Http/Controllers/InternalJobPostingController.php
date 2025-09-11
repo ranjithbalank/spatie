@@ -125,45 +125,12 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
-        // Dispatch the job to send emails to google.com users
-        $users = User::all();
-        $jobs = [];
-
-        // Get emails from users with google.com or dmw.com domains
-        $emails = \App\Models\User::whereNotNull('email')
-            ->where(function($query) {
-                $query->where('email', 'like', '%@google.com')
-                    ->orWhere('email', 'like', '%@dmw.com')
-                    ->orWhere('email', 'like', '%@dmwindia.com');
-            })
-            ->pluck('email')
-            ->toArray();
-
-        // Check if we found any valid emails
-        if (empty($emails)) {
-            return redirect()->route('internal-jobs.index')
-                ->with('error', 'No google.com or dmw.com email addresses found. Cancelling internal job posting notification.');
-        }
-
-        // Get users with valid email domains for job notifications
-        $validUsers = \App\Models\User::whereNotNull('email')
-            ->where(function($query) {
-                $query->where('email', 'like', '%@google.com')
-                    ->orWhere('email', 'like', '%@dmw.com')
-                     ->orWhere('email', 'like', '%@dmwindia.com');
-            })
-            ->get();
-
-        // Create job notifications for valid users only
-        foreach ($validUsers as $user) {
-            $jobs[] = new SendInternalJobEmail($user, $job);
-        }
-
-        // Dispatch the batch job
-        Bus::batch($jobs)
-            ->name('Notify users about IJP: ' . $job->job_title)
-            ->dispatch();
-
+        
+         
+        // Dispatch a single job to send a bulk email to all relevant users
+        // This is more efficient than dispatching a job for each user.
+        SendInternalJobEmail::dispatch($job);
+        
         return redirect()->route('internal-jobs.index')
             ->with('success', 'Job posting created successfully!');
 

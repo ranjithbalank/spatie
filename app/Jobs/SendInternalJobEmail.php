@@ -17,15 +17,15 @@ class SendInternalJobEmail implements ShouldQueue
 {
     use Dispatchable, InteractsWithQueue, Queueable, SerializesModels, Batchable;
 
-    protected $user;
+    // The job only needs the job posting model to function.
     protected $internalJob;
 
     /**
      * Create a new job instance.
+     * The job now only accepts the InternalJobPostings model.
      */
-    public function __construct(User $user, InternalJobPostings $job)
+    public function __construct(InternalJobPostings $job)
     {
-        $this->user = $user;
         $this->internalJob = $job;
     }
 
@@ -34,53 +34,40 @@ class SendInternalJobEmail implements ShouldQueue
      */
     public function handle(): void
     {
-        // @dd($this->user);
-        // Step 1: Get only users with google.co email domains
+        // Step 1: Get all users with the specified email domains
         $emails = User::whereNotNull('email')
-            ->where('email', 'like', '%@google.com%')
-            // orwhere('email', 'like', '%@dmw.com%')
-            ->orwhere('email', 'like', '%@dmwindia.com%')
+            ->where(function ($query) {
+                $query->where('email', 'like', '%@google.com%')
+                    ->orWhere('email', 'like', '%@dmwindia.com%');
+            })
             ->pluck('email')
             ->toArray();
-        // @dd($emails);
+
         if (empty($emails)) {
             Log::info('No email addresses found. Cancelling internal job posting notification.');
-            return; // Cancel the job execution
+            return;
         }
 
-        Log::info('Found ' . count($emails) . ' google.co email addresses for internal job posting.');
+        Log::info('Found ' . count($emails) . ' email addresses for internal job posting.');
 
-        // Step 2: Chunk the emails (max 500 per BCC message per Microsoft SMTP)
-        collect($emails)->chunk(500)->each(function ($chunk) {
+        // Step 2: Chunk the emails (max 500 per BCC message) and send an email for each chunk.
+        // The BCC address is hidden from all recipients.
+        collect($emails)->chunk(500)->each(function ($chunk, $index) {
             try {
-            //     Mail::to('noreply@yourdomain.com') // dummy "To" address
-            //         ->bcc($chunk->toArray())
-            //         ->send(new NewInternalJobPosted($this->internalJob));
-
-            //     Log::info('Internal job email sent to ' . count($chunk) . ' google.co recipients.');
-            // } catch (\Exception $e) {
-            //     Log::error('Failed to send internal job email to google.co users: ' . $e->getMessage());
-            //     // Optionally re-throw to mark job as failed
-            //     // throw $e;
-            // }
-
-            if (str_ends_with($this->user->email, '@dmwindia.com')) {
-                Mail::to($this->user->email)
+                // Using a dummy 'to' address is a good practice for BCC-only emails
+                // as some SMTP servers require a 'to' address.
+                Mail::to('noreply@dmwindia.com')
+                    ->bcc($chunk->toArray())
                     ->send(new NewInternalJobPosted($this->internalJob));
+
+                Log::info("Email chunk " . ($index + 1) . " of " . count($chunk) . " recipients successfully sent.");
+            } catch (\Exception $e) {
+                Log::error('Failed to send internal job email to recipients in chunk ' . ($index + 1) . ': ' . $e->getMessage());
+                // Re-throw to mark the job as failed for this attempt
+                throw $e;
             }
-
-            Log::info("Internal job email sent successfully to: {$this->user->email}");
-
-        } catch (\Exception $e) {
-            Log::error("Failed to send internal job email to {$this->user->email}: " . $e->getMessage());
-
-            // Re-throw the exception to mark the job as failed
-            // This allows Laravel's retry mechanism to work
-            throw $e;
-        }
-
         });
-
-        Log::info('Internal job posting email campaign completed. Total google.co emails sent: ' . count($emails));
+        
+        Log::info('Internal job posting email campaign completed. Total emails sent: ' . count($emails));
     }
 }
