@@ -23,7 +23,7 @@
             -moz-osx-font-smoothing: grayscale;
 
             /* Pleasant Feel Gradient Animation */
-            background: linear-gradient(135deg, #f0f4f8, #e6edf3, #d4dee8, #c1d2e1);
+            background: linear-gradient(135deg, #f0f4f8, #ffc403b7, #d4dee8, #ffc403b7);
             background-size: 400% 400%;
             animation: backgroundShift 15s ease infinite;
         }
@@ -111,7 +111,7 @@
             padding: 2.5rem 1.5rem;
             background-color: rgba(255, 255, 255, 0.9);
             border-radius: 0.75rem;
-            border: 1px solid rgba(229, 231, 235, 0.5);
+            border: 1px solid rgba(199, 134, 50, 0.5);
             opacity: 0;
             animation: fadeIn 0.8s ease-out forwards, shadowPulse 4s ease-in-out infinite;
             /* Apply multiple animations */
