@@ -38,7 +38,7 @@ class UserController extends Controller
         // Fetch all roles to populate the filter dropdown in your view
         $roles = Role::orderBy('name')->get();
 
-        return view("users.index", compact("users", "search", "roles", "filterRoleId","employee"));
+        return view("users.index", compact("users", "search", "roles", "filterRoleId", "employee"));
     }
 
 
@@ -75,7 +75,8 @@ class UserController extends Controller
         $role = Role::findById($validated['role']);
         $user->assignRole($role->name);
         Employees::updateOrCreate(
-                ['emp_name' => $validated['name']]);
+            ['emp_name' => $validated['name']]
+        );
         // Redirect to the users list with a success message
         return redirect()->route('users.index')->with('success', 'User created successfully!');
     }
@@ -120,7 +121,7 @@ class UserController extends Controller
             'role' => 'required|exists:roles,id',
             'status' => 'required|string|in:active,inactive',
         ]);
-         $role = Role::findById($validated['role']);
+        $role = Role::findById($validated['role']);
         // Update the user's attributes
         $user->update([
             'name' => $validated['name'],
@@ -131,7 +132,8 @@ class UserController extends Controller
         $user->syncRoles($role->name);
         Employees::updateOrCreate(
             ['user_id' => $user->id],
-            ['emp_name' => $validated['name']]);
+            ['emp_name' => $validated['name']]
+        );
         // Redirect to the users list with a success message
         return redirect()->route('users.index')->with('success', 'User updated successfully!');
     }
@@ -142,15 +144,15 @@ class UserController extends Controller
     public function destroy(string $id)
     {
         // delete dependent details
-        \App\Models\Employees::where('emp_id', $id)->delete();
+        Employees::where('emp_id', $id)->delete();
 
         // delete employee
-        \App\Models\User::where('id', $id)->delete();
+        User::where('id', $id)->delete();
 
         return back()->with('success', 'Employee deleted successfully.');
     }
 
-     public function import_csv()
+    public function import_csv()
     {
         return view('users.import');
     }
@@ -169,5 +171,4 @@ class UserController extends Controller
             return back()->with('error', 'Error during import: ' . $e->getMessage());
         }
     }
-
 }

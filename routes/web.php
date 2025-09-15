@@ -29,14 +29,14 @@ Route::get('/', function () {
 Route::middleware(['auth', 'verified', 'check.status'])->group(function () {
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
 });
-    Route::get('import', [UserController::class, 'import_csv'])->name('users.import_form');
-    Route::post('import', [UserController::class, 'import'])->name('users.import');
+Route::get('import', [UserController::class, 'import_csv'])->name('users.import_form');
+Route::post('import', [UserController::class, 'import'])->name('users.import');
 
 Route::get('/admin', function () {
     return view('admin.index');
 })->middleware(['auth', 'role:admin'])->name('admin.index');
 
-Route::middleware('auth','menu')->group(function () {
+Route::middleware('auth', 'menu')->group(function () {
 
     // Profile
     Route::get('/profile', [ProfileController::class, 'edit'])->name('profile.edit');
@@ -51,15 +51,15 @@ Route::middleware('auth','menu')->group(function () {
     // menu-permission
     Route::resource('menu-permission', MenuRolePermissionController::class);
     // units
-    Route::resource("units",UnitController::class);
+    Route::resource("units", UnitController::class);
     // departments
-    Route::resource('departments',DepartmentController::class);
+    Route::resource('departments', DepartmentController::class);
     // users
-    Route::resource("users",UserController::class);
+    Route::resource("users", UserController::class);
     // designations
-    Route::resource("designations",DesignationController::class);
+    Route::resource("designations", DesignationController::class);
     // employees
-    Route::resource('employees',EmployeeController::class);
+    Route::resource('employees', EmployeeController::class);
 
     // Holidays List
     Route::resource('holidays', HolidayController::class);
@@ -75,14 +75,14 @@ Route::middleware('auth','menu')->group(function () {
         ->name('import.applicants.pdf');
 
     //leaves
-    Route::resource("/leaves",LeaveController::class);
+    Route::resource("/leaves", LeaveController::class);
     Route::post('leaves/{leave}/manager-decision', [LeaveController::class, 'managerDecision'])->name('leaves.manager.decision');
     Route::post('leaves/{leave}/hr-decision', [LeaveController::class, 'hrDecision'])->name('leaves.hr.decision');
     Route::get('/leaves/export/excel', [LeaveExportController::class, 'exportExcel'])->name('leaves.export.excel');
     Route::get('/leaves/export/pdf', [LeaveExportController::class, 'exportPDF'])->name('leaves.export.pdf');
 
     // Circulars
-    Route::resource('/circulars',CircularController::class);
+    Route::resource('/circulars', CircularController::class);
 
     //events
     Route::resource('events', EventController::class);
@@ -91,7 +91,10 @@ Route::middleware('auth','menu')->group(function () {
 
     // Feedback
     Route::resource('feedback', \App\Http\Controllers\FeedbackController::class);
+
+    // Travel Expenses
+    Route::resource('travel_expenses', App\Http\Controllers\TravelExpenseController::class);
 });
 
 
-require __DIR__.'/auth.php';
+require __DIR__ . '/auth.php';

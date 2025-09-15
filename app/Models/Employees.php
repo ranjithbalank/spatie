@@ -8,7 +8,7 @@ class Employees extends Model
 {
     //
     protected $table = 'employees_details';
-       protected $fillable = [
+    protected $fillable = [
         'emp_id',
         'user_id',
         'emp_name',
@@ -33,6 +33,14 @@ class Employees extends Model
     {
         return $this->belongsTo(Designation::class, 'designation_id');
     }
+    public function department()
+    {
+        return $this->belongsTo(Department::class, 'department_id');
+    }
+    public function unit()
+    {
+        return $this->belongsTo(Unit::class, 'unit_id');
+    }
     public function managedEmployees()
     {
         return $this->hasMany(Employees::class, 'manager_id');
@@ -41,15 +49,15 @@ class Employees extends Model
     public function manager()
     {
         // employee belongs to one manager (who is also an employee)
-        return $this->belongsTo(Employees::class, 'manager_id','emp_id');
+        return $this->belongsTo(Employees::class, 'manager_id', 'emp_id');
     }
     public function subordinates()
-{
-    return $this->hasMany(Employees::class, 'manager_id');
-}
-public function users()
-{
-    // An Employee belongs to a User
-    return $this->belongsTo(User::class);
-}
+    {
+        return $this->hasMany(Employees::class, 'manager_id');
+    }
+    public function users()
+    {
+        // An Employee belongs to a User
+        return $this->belongsTo(User::class);
+    }
 }
