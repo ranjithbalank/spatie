@@ -15,7 +15,7 @@ class RoleController extends Controller
      * Display a listing of the resource.
      */
 
-        public function index(Request $request)
+    public function index(Request $request)
     {
         $search = $request->input('search');
 
@@ -33,13 +33,18 @@ class RoleController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create roles')) {
+            return redirect()
+                ->route('roles.index')
+                ->with('error', 'You do not have permission');
+        }
         $permissions = Permission::all();
         $menu = [
-        'users' => ['label' => 'Users', 'actions' => ['create','edit','delete','view','approve']],
-        'assets' => ['label' => 'Assets', 'actions' => ['create','edit','delete','view','approve']],
-        'leaves' => ['label' => 'Leaves', 'actions' => ['create','edit','delete','view','approve']],
-    ];
-        return view('roles.create',compact('permissions','menu'));
+            'users' => ['label' => 'Users', 'actions' => ['create', 'edit', 'delete', 'view', 'approve']],
+            'assets' => ['label' => 'Assets', 'actions' => ['create', 'edit', 'delete', 'view', 'approve']],
+            'leaves' => ['label' => 'Leaves', 'actions' => ['create', 'edit', 'delete', 'view', 'approve']],
+        ];
+        return view('roles.create', compact('permissions', 'menu'));
     }
 
     /**
@@ -90,7 +95,7 @@ class RoleController extends Controller
         $role->name = $request->input('name');
         $role->save();
 
-         // Sync permissions
+        // Sync permissions
         $role->syncPermissions($request->input('permissions', [])); // empty array if none checked
 
         return redirect()->route('roles.index')->with('success', 'Role updated successfully.');

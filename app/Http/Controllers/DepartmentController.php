@@ -16,11 +16,11 @@ class DepartmentController extends Controller
         $search = $request->input('search');
 
         $departments = Department::when($search, function ($query, $search) {
-                   $query->where('name', 'like', "%{$search}%")
-              ->orWhere('code', 'like', "%{$search}%");
+            $query->where('name', 'like', "%{$search}%")
+                ->orWhere('code', 'like', "%{$search}%");
         })
-        ->orderBy('name', 'asc')
-        ->paginate(5);
+            ->orderBy('name', 'asc')
+            ->paginate(5);
 
         return view('departments.index', compact('departments', 'search'));
     }
@@ -29,8 +29,13 @@ class DepartmentController extends Controller
     /**
      * Show the form for creating a new resource.
      */
-     public function create()
+    public function create()
     {
+        if (!auth()->user()->can('create departments')) {
+            return redirect()
+                ->route('departments.index')
+                ->with('error', 'You do not have permission');
+        }
         $units = Unit::all(); // fetch all units
         return view('departments.create', compact('units'));
     }
@@ -104,7 +109,7 @@ class DepartmentController extends Controller
 
         // Redirect back with success message
         return redirect()->route('departments.index')
-                        ->with('success', 'Department updated successfully.');
+            ->with('success', 'Department updated successfully.');
     }
 
     public function destroy(string $id)
@@ -117,6 +122,6 @@ class DepartmentController extends Controller
 
         // Redirect back with success message
         return redirect()->route('departments.index')
-                        ->with('success', 'Department deleted successfully.');
+            ->with('success', 'Department deleted successfully.');
     }
 }

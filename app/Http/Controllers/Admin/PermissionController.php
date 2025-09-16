@@ -22,7 +22,7 @@ class PermissionController extends Controller
             ->paginate(10); // ✅ paginate instead of get()
 
         return view('permissions.index', compact('permissions', 'search'));
-}
+    }
 
 
     /**
@@ -30,6 +30,11 @@ class PermissionController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create permissions')) {
+            return redirect()
+                ->route('permissions.index')
+                ->with('error', 'You do not have permission');
+        }
         return view('permissions.create');
     }
 

@@ -18,9 +18,9 @@ class HolidayController extends Controller
             $query->where('name', 'like', "%{$search}%")
                 ->orWhere('date', 'like', "%{$search}%");
         })
-        ->orderBy('date', 'asc')
-        ->paginate(5);
-        
+            ->orderBy('date', 'asc')
+            ->paginate(5);
+
         return view('holidays.index', compact('holidays'));
     }
 
@@ -29,6 +29,11 @@ class HolidayController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create holidays')) {
+            return redirect()
+                ->route('holidays.index')
+                ->with('error', 'You do not have permission');
+        }
         return view('holidays.create');
     }
 

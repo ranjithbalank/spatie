@@ -12,8 +12,8 @@ class MenuController extends Controller
         $search = $request->input('search');
 
         $menus = Menu::when($search, function ($query) use ($search) {
-                $query->where('name', 'like', "%{$search}%");
-            })
+            $query->where('name', 'like', "%{$search}%");
+        })
             ->orderBy('name')
             ->paginate(5);
 
@@ -24,6 +24,11 @@ class MenuController extends Controller
 
     public function create()
     {
+        if (!auth()->user()->can('create menus')) {
+            return redirect()
+                ->route('menus.index')
+                ->with('error', 'You do not have permission');
+        }
         $parents = Menu::whereNull('parent_id')->get();
         return view('menus.create', compact('parents'));
     }
@@ -46,8 +51,8 @@ class MenuController extends Controller
     public function edit(Menu $menu)
     {
         $parents = Menu::whereNull('parent_id')
-                        ->where('id', '!=', $menu->id) // prevent assigning itself as parent
-                        ->get();
+            ->where('id', '!=', $menu->id) // prevent assigning itself as parent
+            ->get();
 
         return view('menus.edit', compact('menu', 'parents'));
     }

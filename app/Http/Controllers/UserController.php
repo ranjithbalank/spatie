@@ -48,6 +48,11 @@ class UserController extends Controller
     // In your UserController.php
     public function create()
     {
+        if (!auth()->user()->can('create users')) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'You do not have permission');
+        }
         $roles = Role::all(); // Or whatever method you use to get roles
         return view('users.create', compact('roles'));
     }

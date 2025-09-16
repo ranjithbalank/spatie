@@ -40,7 +40,7 @@ class EmployeeController extends Controller
         } else {
             $employees = $query->paginate(10); // Changed to a more reasonable number for normal viewing
         }
-        return view("employees.index", compact("search", 'employees','users'));
+        return view("employees.index", compact("search", 'employees', 'users'));
     }
 
     /**
@@ -48,13 +48,21 @@ class EmployeeController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create employees')) {
+            return redirect()
+                ->route('employees.index')
+                ->with('error', 'You do not have permission');
+        }
+
         $units = Unit::all();
         $users = User::all();
         $employees = Employees::all();
         $departments = Department::all();
         $designations = Designation::all();
-        return view("employees.create",compact('units', 'users', 'employees', 'departments', 'designations'));
+
+        return view("employees.create", compact('units', 'users', 'employees', 'departments', 'designations'));
     }
+
 
     /**
      * Store a newly created resource in storage.
@@ -77,7 +85,7 @@ class EmployeeController extends Controller
             "designation_id" => "nullable|integer|exists:designations,id",
             "doj" => "nullable|date",
             "dor" => "nullable|date|after_or_equal:doj",
-            "dob"=> "nullable|date",
+            "dob" => "nullable|date",
             "leave_balance" => "nullable|integer|min:0", // This rule is commented out.
             "status" => "required|string|in:active,inactive",
             "email" => "required|email|unique:users,email",
@@ -90,7 +98,7 @@ class EmployeeController extends Controller
                 'name' => $validated_data['emp_name'],
                 'email' => $validated_data['email'],
                 'password' => Hash::make($validated_data['password']),
-                'leave_balance' => $validated_data['leave_balance'] , // Default to 0 if not provided
+                'leave_balance' => $validated_data['leave_balance'], // Default to 0 if not provided
             ]);
 
             // 3. Add the new user's ID to the validated data for the employee
@@ -100,14 +108,13 @@ class EmployeeController extends Controller
             $validated_data['created_by'] = Auth::id();
             $validated_data['updated_by'] = Auth::id();
             // Unset the 'leave_balance' key directly from the array
-            unset($validated_data['leave_balance']);    
+            unset($validated_data['leave_balance']);
             // 5. Create the Employee record, linked to the new user
             // Ensure your Employees model is configured with a fillable array
             $employee = Employees::create($validated_data);
 
             return redirect()->route('employees.index')
                 ->with('success', 'Employee and associated user created successfully.');
-
         } catch (ValidationException $e) {
             return redirect()->back()->withErrors($e->errors())->withInput();
         } catch (\Exception $e) {
@@ -183,13 +190,12 @@ class EmployeeController extends Controller
             $user->save();
 
             // Update Employee (exclude emp_id)
-            $employee->fill(collect($validated_data)->except(['email', 'password',"leave_balance"])->toArray());
+            $employee->fill(collect($validated_data)->except(['email', 'password', "leave_balance"])->toArray());
             $employee->updated_by = Auth::id();
             $employee->save();
 
             return redirect()->route('employees.index')
                 ->with('success', 'Employee details updated successfully.');
-
         } catch (\Exception $e) {
             return redirect()->back()
                 ->withInput()
@@ -221,7 +227,6 @@ class EmployeeController extends Controller
 
         // 5. Redirect back with a success message
         return redirect()->route('employees.index')
-                         ->with('success', 'Employee and associated user deleted successfully.');
+            ->with('success', 'Employee and associated user deleted successfully.');
     }
-
 }

@@ -24,6 +24,11 @@ class CircularController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create circulars')) {
+            return redirect()
+                ->route('circulars.index')
+                ->with('error', 'You do not have permission');
+        }
         //
         return view('circular.create');
     }

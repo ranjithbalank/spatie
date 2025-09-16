@@ -31,22 +31,22 @@ class InternalJobPostingController extends Controller // ✅ correct class name
 
         $today = now()->format('Y-m-d');
         foreach ($jobs as $job) {
-                // Get today's date and the job's end date as Carbon objects
-                $today = now();
-                $endDate = \Carbon\Carbon::parse($job->end_date);
+            // Get today's date and the job's end date as Carbon objects
+            $today = now();
+            $endDate = \Carbon\Carbon::parse($job->end_date);
 
-                // Check if the end date is in the past
-                // The `isPast()` method returns true if the date is before the current moment.
-                // Check if the end date is in the past.
-                // If the HR has specifically marked the job as inactive, it should be closed regardless of the date.
-                if ($job->status === 'inactive') {
-                    $job->status = 'Closed';
-                } elseif ($endDate->isBefore(today())) {
-                    $job->status = 'Registration closed';
-                } else {
-                    $job->status = 'active';
-                }
+            // Check if the end date is in the past
+            // The `isPast()` method returns true if the date is before the current moment.
+            // Check if the end date is in the past.
+            // If the HR has specifically marked the job as inactive, it should be closed regardless of the date.
+            if ($job->status === 'inactive') {
+                $job->status = 'Closed';
+            } elseif ($endDate->isBefore(today())) {
+                $job->status = 'Registration closed';
+            } else {
+                $job->status = 'active';
             }
+        }
 
 
         // All jobs for dropdown
@@ -89,9 +89,15 @@ class InternalJobPostingController extends Controller // ✅ correct class name
      */
     public function create()
     {
+        if (!auth()->user()->can('create ijp')) {
+            return redirect()
+                ->route('internal-jobs.index')
+                ->with('error', 'You do not have permission');
+        }
+
         $jobId = InternalJobPostings::max('id') + 1;
 
-        return view('internal_jobs.create',compact('jobId'));
+        return view('internal_jobs.create', compact('jobId'));
     }
 
     /**
@@ -113,7 +119,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             'status' => 'required|string|in:active,inactive',
         ]);
 
-        $job=InternalJobPostings::create([
+        $job = InternalJobPostings::create([
             'job_title' => $request->job_title,
             'job_description' => $request->job_description,
             'qualifications' => $request->qualification,
@@ -125,32 +131,31 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             'end_date' => $request->end_date,
             'status' => $request->status,
         ]);
-        
-         
+
+
         // Dispatch a single job to send a bulk email to all relevant users
         // This is more efficient than dispatching a job for each user.
         SendInternalJobEmail::dispatch($job);
 
         return redirect()->route('internal-jobs.index')
             ->with('success', 'Job posting created successfully! Notification emails are being sent to all employees with a valid company email address.');
-
     }
 
     public function show(string $id)
     {
         $jobs = InternalJobPostings::find($id);
         $applications = InternalJobApplications::where('employee_id', Auth::id())->pluck('job_id')->toArray();
-        return view('internal_jobs.show',compact('jobs', 'applications'));
+        return view('internal_jobs.show', compact('jobs', 'applications'));
     }
 
     public function edit(string $id)
     {
         $jobs = InternalJobPostings::find($id);
-        return view('internal_jobs.edit',compact('jobs'));
+        return view('internal_jobs.edit', compact('jobs'));
         //
     }
 
-   public function update(Request $request, $id)
+    public function update(Request $request, $id)
     {
         // Validate data
         $validated = $request->validate([
@@ -174,16 +179,16 @@ class InternalJobPostingController extends Controller // ✅ correct class name
 
         // Redirect or return response
         return redirect()->route('internal-jobs.index')
-                        ->with('success', 'Job updated successfully!');
+            ->with('success', 'Job updated successfully!');
     }
 
 
-   public function destroy(InternalJobpostings $internal_job)
+    public function destroy(InternalJobpostings $internal_job)
     {
         $internal_job->delete();
 
         return redirect()->route('internal-jobs.index')
-                        ->with('success', 'Job deleted successfully!');
+            ->with('success', 'Job deleted successfully!');
     }
 
     public function apply(Request $request, $job)
@@ -252,7 +257,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             new JobApplicantsExport($jobId),
             $filename
         );
-}
+    }
 
 
 
@@ -269,6 +274,4 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             return back()->with('error', 'Import failed: ' . $e->getMessage());
         }
     }
-
-
 }

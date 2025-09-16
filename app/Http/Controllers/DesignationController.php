@@ -17,13 +17,13 @@ class DesignationController extends Controller
         $search = $request->input('search');
 
         $designations = Designation::when($search, function ($query, $search) {
-                   $query->where('designation_name', 'like', "%{$search}%")
-              ->orWhere('designation_code', 'like', "%{$search}%")
-              ->orWhere('status','like',"%{$search}%");
+            $query->where('designation_name', 'like', "%{$search}%")
+                ->orWhere('designation_code', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%");
         })
-        ->orderBy('designation_name', 'asc')
-        ->paginate(5);
-        return view ('designations.index',compact("designations"));
+            ->orderBy('designation_name', 'asc')
+            ->paginate(5);
+        return view('designations.index', compact("designations"));
     }
 
     /**
@@ -31,7 +31,12 @@ class DesignationController extends Controller
      */
     public function create()
     {
-        return view ('designations.create');
+        if (!auth()->user()->can('create designations')) {
+            return redirect()
+                ->route('designations.index')
+                ->with('error', 'You do not have permission');
+        }
+        return view('designations.create');
     }
 
     /**
@@ -40,7 +45,7 @@ class DesignationController extends Controller
     public function store(Request $request)
     {
         // dd($request->all());
-         $request->validate([
+        $request->validate([
             'code' => 'required|string|max:50|unique:departments,code',
             'name' => 'required|string|max:255',
             'status' => 'required|in:active,inactive',
@@ -98,8 +103,7 @@ class DesignationController extends Controller
 
         // Redirect back with success message
         return redirect()->route('designations.index')
-                        ->with('success', 'Designations updated successfully.');
-
+            ->with('success', 'Designations updated successfully.');
     }
 
     /**
@@ -115,6 +119,6 @@ class DesignationController extends Controller
 
         // Redirect back with success message
         return redirect()->route('designations.index')
-                        ->with('success', 'Designations deleted successfully.');
+            ->with('success', 'Designations deleted successfully.');
     }
 }

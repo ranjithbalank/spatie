@@ -16,10 +16,10 @@ class UnitController extends Controller
         $search = $request->input('search');
 
         $units = Unit::when($search, function ($query, $search) {
-                $query->where('code', 'like', "%{$search}%")
-                    ->orWhere('name', 'like', "%{$search}%")
-                    ->orWhere('status', 'like', "%{$search}%");
-            })
+            $query->where('code', 'like', "%{$search}%")
+                ->orWhere('name', 'like', "%{$search}%")
+                ->orWhere('status', 'like', "%{$search}%");
+        })
             ->orderBy('name')
             ->paginate(10);
 
@@ -32,6 +32,11 @@ class UnitController extends Controller
      */
     public function create()
     {
+        if (!auth()->user()->can('create units')) {
+            return redirect()
+                ->route('units.index')
+                ->with('error', 'You do not have permission');
+        }
         return view("units.create");
     }
 
@@ -53,7 +58,7 @@ class UnitController extends Controller
         ]);
 
         return redirect()->route('units.index')->with('success', 'Unit created successfully.');
-}
+    }
 
 
     /**
@@ -117,5 +122,4 @@ class UnitController extends Controller
             ->route('units.index')
             ->with('success', 'Unit deleted successfully.');
     }
-
 }
