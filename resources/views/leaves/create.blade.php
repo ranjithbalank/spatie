@@ -10,10 +10,10 @@
         <hr class="mb-4">
         {{-- This section correctly displays general session errors --}}
         @if (session('error'))
-            <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                {{ session('error') }}
-                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-            </div>
+        <div class="alert alert-danger alert-dismissible fade show" role="alert">
+            {{ session('error') }}
+            <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+        </div>
         @endif
         <div class="py-3 w-50">
             {{-- <div class="max-w-4xl mx-auto"> --}}
@@ -22,7 +22,7 @@
 
                 <form method="POST" action="{{ route('leaves.store') }}">
                     @csrf
-                    <div class="mb-4 w-25">
+                    <div class="mb-4 w-50">
                         <label for="leave_duration" class="block text-sm font-medium text-gray-700">Leave
                             Duration</label>
                         <select name="leave_duration" id="leave_duration"
@@ -39,7 +39,7 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                         {{-- ADD THIS SECTION --}}
                         @error('from_date')
-                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -50,7 +50,7 @@
                             class="mt-1 block w-full border-gray-300 rounded-md shadow-sm" required>
                         {{-- ADD THIS SECTION --}}
                         @error('to_date')
-                            <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
+                        <div class="text-red-500 text-sm mt-1">{{ $message }}</div>
                         @enderror
                     </div>
 
@@ -59,7 +59,7 @@
                         <label for="leave_days" class="block text-sm font-medium text-gray-700">Leave
                             Days</label>
                         <input type="number" name="leave_days" id="leave_days"
-                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-gray-100" readonly>
+                            class="mt-1 block w-full border-gray-300 rounded-md shadow-sm bg-white-100" readonly>
                     </div>
 
                     <!-- Reason -->

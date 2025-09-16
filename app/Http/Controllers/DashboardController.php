@@ -111,9 +111,12 @@ class DashboardController extends Controller
         $ijpCount = DB::table('internal_jobpostings')
             ->whereDate('end_date', '>=', now()->toDateString())
             ->count();
-        
+
         $holidays = DB::table('holidays')
             ->where('date', '>=', now()->toDateString())
+            ->get();
+
+        $circular = DB::table("circulars")
             ->get();
 
         return view('dashboard', [
@@ -123,9 +126,9 @@ class DashboardController extends Controller
             'pendingCount' => $pendingCount,
             'ijpCount' => $ijpCount,
             'holidays' => $holidays,
+            'circulars' => $circular,
             // 'employeesCount' => $employeesCount,
             // 'activeEmployeesCount' => $activeEmployeesCount,
         ]);
     }
-
 }
