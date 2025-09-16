@@ -150,6 +150,11 @@ class InternalJobPostingController extends Controller // ✅ correct class name
 
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit ijp')) {
+            return redirect()
+                ->route('internal-jobs.index')
+                ->with('error', 'You do not have permission');
+        }
         $jobs = InternalJobPostings::find($id);
         return view('internal_jobs.edit', compact('jobs'));
         //

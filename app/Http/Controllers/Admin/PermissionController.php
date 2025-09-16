@@ -65,6 +65,11 @@ class PermissionController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit permissions')) {
+            return redirect()
+                ->route('permissions.index')
+                ->with('error', 'You do not have permission');
+        }
         return view('permissions.create', [
             'permissions' => Permission::findOrFail($id)
         ]);

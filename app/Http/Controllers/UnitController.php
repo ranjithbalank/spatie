@@ -74,6 +74,11 @@ class UnitController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit units')) {
+            return redirect()
+                ->route('units.index')
+                ->with('error', 'You do not have permission');
+        }
         $unit = Unit::findOrFail($id);
         return view("units.edit", compact('unit'));
     }

@@ -14,6 +14,11 @@ class DesignationController extends Controller
      */
     public function index(Request $request)
     {
+        if (!auth()->user()->can('view designations')) {
+            return redirect()
+                ->route('dashboard')
+                ->with('error', 'You do not have permission');
+        }
         $search = $request->input('search');
 
         $designations = Designation::when($search, function ($query, $search) {
@@ -71,6 +76,11 @@ class DesignationController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit designations')) {
+            return redirect()
+                ->route('designations.index')
+                ->with('error', 'You do not have permission');
+        }
         // Find the department or fail
         $designations = Designation::findOrFail($id);
 
@@ -111,6 +121,11 @@ class DesignationController extends Controller
      */
     public function destroy(string $id)
     {
+        if (!auth()->user()->can('delete designations')) {
+            return redirect()
+                ->route('designations.index')
+                ->with('error', 'You do not have permission');
+        }
         // Find the department
         $designations = Designation::findOrFail($id);
 

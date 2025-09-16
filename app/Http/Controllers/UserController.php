@@ -99,6 +99,11 @@ class UserController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit users')) {
+            return redirect()
+                ->route('users.index')
+                ->with('error', 'You do not have permission');
+        }
         // Find the user by their ID. findOrFail will throw a 404 error
         // if a user with that ID is not found.
         $user = User::findOrFail($id);

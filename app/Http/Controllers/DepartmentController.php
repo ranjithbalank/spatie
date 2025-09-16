@@ -77,6 +77,11 @@ class DepartmentController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit departments')) {
+            return redirect()
+                ->route('departments.index')
+                ->with('error', 'You do not have permission');
+        }
         // Find the department or fail
         $department = Department::findOrFail($id);
 
@@ -114,6 +119,11 @@ class DepartmentController extends Controller
 
     public function destroy(string $id)
     {
+        if (!auth()->user()->can('delete departments')) {
+            return redirect()
+                ->route('departments.index')
+                ->with('error', 'You do not have permission');
+        }
         // Find the department
         $department = Department::findOrFail($id);
 

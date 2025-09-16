@@ -64,6 +64,11 @@ class HolidayController extends Controller
      */
     public function edit(Holiday $holiday)
     {
+        if (!auth()->user()->can('edit holidays')) {
+            return redirect()
+                ->route('holidays.index')
+                ->with('error', 'You do not have permission');
+        }
         return view('holidays.edit', compact('holiday'));
     }
 

@@ -77,6 +77,11 @@ class RoleController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('create roles')) {
+            return redirect()
+                ->route('permissions.index')
+                ->with('error', 'You do not have permission');
+        }
         return view('roles.create', [
             'role' => Role::findOrFail($id),
             "permissions" => Permission::all()

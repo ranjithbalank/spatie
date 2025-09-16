@@ -137,6 +137,11 @@ class EmployeeController extends Controller
      */
     public function edit(string $id)
     {
+        if (!auth()->user()->can('edit employees')) {
+            return redirect()
+                ->route('employees.index')
+                ->with('error', 'You do not have permission');
+        }
         $employee = Employees::findOrFail($id);
         $user = $employee->user;
         // Fetch all the data needed for the form dropdowns

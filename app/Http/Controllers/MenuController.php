@@ -50,6 +50,11 @@ class MenuController extends Controller
     }
     public function edit(Menu $menu)
     {
+        if (!auth()->user()->can('edit menus')) {
+            return redirect()
+                ->route('menus.index')
+                ->with('error', 'You do not have permission');
+        }
         $parents = Menu::whereNull('parent_id')
             ->where('id', '!=', $menu->id) // prevent assigning itself as parent
             ->get();
