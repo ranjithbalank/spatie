@@ -9,6 +9,7 @@ class Circular extends Model
     //
     protected $fillable = [
         'circular_no',
+        'circular_name',
         'circular_date',
         'created_by',
         'file_path',

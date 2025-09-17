@@ -12,18 +12,18 @@
 
             {{-- Success Message --}}
             @if (session('success'))
-                <div class="alert alert-success alert-dismissible fade show" role="alert">
-                    {{ session('success') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-success alert-dismissible fade show" role="alert">
+                {{ session('success') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             @endif
 
             {{-- Error Message --}}
             @if (session('error'))
-                <div class="alert alert-danger alert-dismissible fade show" role="alert">
-                    {{ session('error') }}
-                    <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
-                </div>
+            <div class="alert alert-danger alert-dismissible fade show" role="alert">
+                {{ session('error') }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert"></button>
+            </div>
             @endif
 
             <form action="{{ route('circulars.store') }}" method="POST" enctype="multipart/form-data">
@@ -32,15 +32,23 @@
                 <div class="row w-full">
                     {{-- Circular Number --}}
                     <div class="col-md-4 mb-3">
-                        <label for="circular_number" class="form-label">Circular Number / Name</label>
+                        <label for="circular_number" class="form-label">Circular Number</label>
                         <input type="text" name="circular_number" id="circular_number"
                             class="form-control @error('circular_number') is-invalid @enderror"
                             value="{{ old('circular_number') }}" required>
                         @error('circular_number')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                        <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
-
+                    <div class="col-md-4 mb-3">
+                        <label for="circular_name" class="form-label">Circular Name</label>
+                        <input type="text" name="circular_name" id="circular_name"
+                            class="form-control @error('circular_number') is-invalid @enderror"
+                            value="{{ old('circular_name') }}" required>
+                        @error('circular_name')
+                        <span class="invalid-feedback">{{ $message }}</span>
+                        @enderror
+                    </div>
                     {{-- Date of Circular --}}
                     <div class="col-md-4 mb-3">
                         <label for="circular_date" class="form-label">Date of Circular</label>
@@ -48,7 +56,7 @@
                             class="form-control @error('circular_date') is-invalid @enderror"
                             value="{{ old('circular_date', \Carbon\Carbon::now()->format('Y-m-d')) }}" required>
                         @error('circular_date')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                        <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
 
@@ -67,7 +75,7 @@
                             class="form-control w-50 @error('circular_file') is-invalid @enderror" accept=".pdf"
                             style="height:50%">
                         @error('circular_file')
-                            <span class="invalid-feedback">{{ $message }}</span>
+                        <span class="invalid-feedback">{{ $message }}</span>
                         @enderror
                     </div>
                 </div>

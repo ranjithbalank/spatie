@@ -14,6 +14,7 @@ return new class extends Migration
         Schema::create('circulars', function (Blueprint $table) {
             $table->id();
             $table->string("circular_no")->unique();
+            $table->string("circular_name")->unique();
             $table->date("circular_date");
             $table->string("created_by");
             $table->string("file_path");

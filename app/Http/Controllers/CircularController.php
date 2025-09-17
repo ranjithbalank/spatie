@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Circular;
+use App\Models\Event;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
@@ -42,6 +43,7 @@ class CircularController extends Controller
         // Validate the request
         $request->validate([
             'circular_number' => 'required|string|max:255',
+            'circular_name' => "required|string|max:255",
             'circular_date' => 'required|date',
             'circular_file' => 'required|file|mimes:pdf', // max 5MB
         ]);
@@ -57,9 +59,18 @@ class CircularController extends Controller
         // Create a new Circular entry
         Circular::create([
             'circular_no' => $request->circular_number,
+            "circular_name" => $request->circular_name,
             'circular_date' => $request->circular_date,
             'created_by' => Auth::user()->name,
             'file_path' => $path,
+        ]);
+
+        Event::create([
+            "title"       => $request->circular_name,
+            "description" => $request->circular_name,
+            "start"       => $request->circular_date,
+            "end"         => $request->circular_date, // or another field from request
+            "color"       => "#FF5733"
         ]);
 
         return redirect()->route('circulars.index')->with('success', 'Circular uploaded successfully!');
