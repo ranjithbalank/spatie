@@ -7,7 +7,7 @@
         <!-- Email Address -->
         <div>
             <h5 class="text-lg text-center font-medium text-gray-900 relative">
-                {{ __('Please Login To Access Your MyDMW') }}
+                {{ __('Let’s Get Started — Log in!') }}
                 <a href="https://drive.google.com/file/d/1bVawXfliVMwKE9VlQ2SXpJ0OL8XMaBJ_/view?usp=sharing"
                     class="absolute right-0 top-1/2 -translate-y-1/2 text-gray-500 hover:text-gray-700">
                     <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5 m-2" viewBox="0 0 20 20" fill="red">
@@ -48,9 +48,9 @@
             {{-- @if (Route::has('password.request'))
             <a class="underline text-sm text-gray-600 hover:text-gray-900 rounded-md focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
                 href="{{ route('password.request') }}">
-                {{ __('Forgot your password?') }}
+            {{ __('Forgot your password?') }}
             </a>
-        @endif --}}
+            @endif --}}
 
             <x-primary-button class="ms-3">
                 {{ __('Log in') }}

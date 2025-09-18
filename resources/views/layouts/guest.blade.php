@@ -14,21 +14,17 @@
     @vite(['resources/css/app.css', 'resources/js/app.js'])
 
     <style>
-        /* Base Styles */
         body {
             font-family: 'Figtree', sans-serif;
             color: #1F2937;
-            /* Dark gray for text */
             -webkit-font-smoothing: antialiased;
             -moz-osx-font-smoothing: grayscale;
 
-            /* Pleasant Feel Gradient Animation */
-            background: linear-gradient(135deg, #f0f4f8, #ffc403b7, #d4dee8, #ffc403b7);
+            background: linear-gradient(135deg, #ffffff, #ffffff, #ffffff, #ffffff);
             background-size: 400% 400%;
             animation: backgroundShift 15s ease infinite;
         }
 
-        /* Keyframe for the gentle background animation */
         @keyframes backgroundShift {
             0% {
                 background-position: 0% 50%;
@@ -43,7 +39,6 @@
             }
         }
 
-        /* Floating animation for elements */
         @keyframes float {
             0% {
                 transform: translateY(0px);
@@ -58,66 +53,61 @@
             }
         }
 
-        /* Floating shadow effect for the card */
         @keyframes shadowPulse {
 
             0%,
             100% {
-                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.1), 0 4px 6px -2px rgba(0, 0, 0, 0.05);
+                box-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0), 0 4px 6px -2px rgba(0, 0, 0, 0);
             }
 
             50% {
-                box-shadow: 0 15px 20px -3px rgba(0, 0, 0, 0.15), 0 6px 8px -2px rgba(0, 0, 0, 0.08);
+                box-shadow: 0 15px 20px -3px rgba(0, 0, 0, 0), 0 6px 8px -2px rgba(0, 0, 0, 0);
             }
         }
 
-        /* Container for the page */
         .page-container {
             min-height: 100vh;
             display: flex;
             flex-direction: column;
             justify-content: center;
             align-items: center;
-            padding: 2.5rem 0;
+            padding: 2.5rem 1rem;
         }
 
-        /* Logo and Title */
         .logo-section {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 0.5rem;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
             animation: float 4s ease-in-out infinite;
-            /* Apply the floating animation here */
         }
 
-        .logo-section .logo-text {
-            font-size: 1.25rem;
+        .logo-text {
+            font-size: 1.125rem;
+            /* smaller for mobile */
             font-weight: 600;
             transition: transform 0.3s ease-in-out;
             color: #4A5568;
+            text-align: center;
         }
 
         .logo-section:hover .logo-text {
             transform: scale(1.05);
         }
 
-        /* Card container for forms */
         .card-container {
             width: 100%;
-            max-width: 28rem;
-            margin-top: 1.5rem;
-            padding: 2.5rem 1.5rem;
-            background-color: rgba(255, 255, 255, 0.9);
+            max-width: 24rem;
+            /* smaller width for mobile */
+            padding: 2rem 1rem;
+            background-color: rgba(255, 255, 255, 0.95);
             border-radius: 0.75rem;
             border: 1px solid rgba(199, 134, 50, 0.5);
             opacity: 0;
             animation: fadeIn 0.8s ease-out forwards, shadowPulse 4s ease-in-out infinite;
-            /* Apply multiple animations */
         }
 
-        /* Keyframe for a smooth fade-in */
         @keyframes fadeIn {
             from {
                 opacity: 0;
@@ -129,6 +119,18 @@
                 transform: translateY(0);
             }
         }
+
+        /* Responsive tweaks */
+        @media (min-width: 640px) {
+            .logo-text {
+                font-size: 1.25rem;
+            }
+
+            .card-container {
+                max-width: 28rem;
+                padding: 2.5rem 1.5rem;
+            }
+        }
     </style>
 </head>
 
@@ -136,8 +138,9 @@
     <div class="page-container">
         <div class="logo-section">
             <a href="/" class="flex flex-col items-center">
-                <x-application-logo class="w-20 h-10 fill-current text-gray-500" />
-                <span class="logo-text">MyDMW - Your Digital Management Workspace</span>
+                <x-application-logo class="w-16 h-16 sm:w-20 sm:h-20 fill-current text-gray-500" />
+                <span class="logo-text pt-5">MyDMW </span>
+                <!-- <span class="logo-text">work made easy</span> -->
             </a>
         </div>
 

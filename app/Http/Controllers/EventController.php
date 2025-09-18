@@ -74,12 +74,13 @@ class EventController extends Controller
 
     public function update(Request $request, Event $event)
     {
+        // @dd($request->all());
         $validated = $request->validate([
-        'title' => 'required|string|max:255',
-        'description' => 'nullable|string',
-        'color' => 'nullable|string',
-        'start_date' => 'required|date',
-        'end_date' => 'required|date|after_or_equal:start_date',
+            'title' => 'required|string|max:255',
+            'description' => 'nullable|string',
+            'color' => 'nullable|string',
+            'start_date' => 'required|date',
+            'end_date' => 'required|date|after_or_equal:start_date',
         ]);
 
         $event->update([
@@ -91,7 +92,6 @@ class EventController extends Controller
         ]);
 
         return redirect()->route('events.index')->with('success', 'Event added successfully!');
-
     }
 
     public function destroy(Event $event)
@@ -110,19 +110,19 @@ class EventController extends Controller
         }
 
         $events = Event::whereDate('start', $carbonDate)
-                       ->orWhere(function ($query) use ($carbonDate) {
-                           $query->whereDate('start', '<', $carbonDate)
-                                 ->whereDate('end', '>=', $carbonDate);
-                       })
-                       ->get()
-                       ->map(function ($event) {
-                           return [
-                               'title' => $event->title,
-                               'description' => $event->description,
-                               'start' => $event->start,
-                               'end' => $event->end,
-                           ];
-                       });
+            ->orWhere(function ($query) use ($carbonDate) {
+                $query->whereDate('start', '<', $carbonDate)
+                    ->whereDate('end', '>=', $carbonDate);
+            })
+            ->get()
+            ->map(function ($event) {
+                return [
+                    'title' => $event->title,
+                    'description' => $event->description,
+                    'start' => $event->start,
+                    'end' => $event->end,
+                ];
+            });
 
         return response()->json($events);
     }
