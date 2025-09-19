@@ -13,7 +13,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center w-full mb-4">
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
-                {{ __('Circulars') }}
+                {{ __('Circulars / Policies') }}
 
                 {{-- Info Icon (Linked to Google Drive for Reference/Help Docs) --}}
                 <a href="https://drive.google.com/file/d/1aVJ01FG3wVKQd1iK8CjqvJds_AWzuJgr/view?usp=sharing"
@@ -46,8 +46,9 @@
                 {{-- Action Buttons --}}
                 <div class="d-flex justify-content-start mb-3">
                     @hasanyrole(['hr', 'admin'])
-                    <a href="{{ route('circulars.create') }}" class="btn btn-success shadow-sm">
-                        <i class="bi bi-person-plus"> Create Circular </i>
+                    <a href="{{ route('circulars.create') }}"
+                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                        + Create
                     </a>
                     @endhasanyrole
                 </div>
@@ -96,6 +97,7 @@
             PDF Viewer Modals
             Each Circular opens in Bootstrap Modal with PDF.js viewer
         ============================ --}}
+        @if ($circulars != null && count($circulars) > 0)
         @foreach ($circulars as $circular)
         <div class="modal fade" id="pdfModal{{ $circular->id }}" tabindex="-1"
             aria-labelledby="pdfModalLabel{{ $circular->id }}" aria-hidden="true">
@@ -115,10 +117,10 @@
                         </iframe>
                     </div>
 
-                    {{-- Optional Footer (Download button if needed in future) --}}
+                    {{-- Optional Footer --}}
                     {{--
-                        <div class="modal-footer">
-                            <a href="{{ asset('storage/' . $circular->file_path) }}" class="btn btn-success" target="_blank">
+                    <div class="modal-footer">
+                        <a href="{{ asset('storage/' . $circular->file_path) }}" class="btn btn-success" target="_blank">
                     <i class="bi bi-download"></i> Download PDF
                     </a>
                 </div>
@@ -127,20 +129,27 @@
         </div>
         </div>
         @endforeach
+        @else
+        <p class="text-muted text-center">No circulars available.</p>
+        @endif
 
-        {{-- Page Scripts --}}
-        @section('scripts')
-        {{-- DataTables JS --}}
-        <script src="https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('#circularsTable').DataTable({
-                    "order": [], // disable initial ordering
-                    "pageLength": 10 // show 10 rows per page
+        <div
+            </div>
+
+
+            {{-- Page Scripts --}}
+            @section('scripts')
+            {{-- DataTables JS --}}
+            <script src="https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js"></script>
+            <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $('#circularsTable').DataTable({
+                        "order": [], // disable initial ordering
+                        "pageLength": 10 // show 10 rows per page
+                    });
                 });
-            });
-        </script>
-        @endsection
+            </script>
+            @endsection
     </x-slot>
 </x-app-layout>

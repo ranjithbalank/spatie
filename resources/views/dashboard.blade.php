@@ -3,19 +3,37 @@
 
     @section('content')
     {{-- Left Side Card - Welcome Message --}}
-    <div class="bg-white overflow-hidden shadow-sm sm:rounded-lg">
-        <div class="p-6 text-red-900">
-            Hello!
-            <span class="text-success"><b>{{ Auth::user()->name }} 😎</b></span>,
-            <br><br>
-            Welcome to your <b>MyDMW dashboard!</b>
-            <br><br>
-            {{ __('You have Successfully logged in!') }}
+    <div class="bg-gradient-to-r from-blue-50 to-blue-100 dark:from-gray-800 dark:to-gray-900 
+            overflow-hidden shadow-lg sm:rounded-2xl transition-all duration-300 hover:shadow-2xl mb-4">
+        <div class="p-8 text-center">
+
+            {{-- Emoji / Icon --}}
+            <div class="flex justify-center mt-6 mb-6">
+                <div class="w-16 h-16 flex items-center justify-center rounded-full bg-blue-600 text-white text-3xl shadow-md">
+                    😎
+                </div>
+            </div>
+
+            {{-- Greeting --}}
+            <h2 class="text-2xl font-bold text-gray-900 dark:text-white">
+                Hello, <span class="text-red-600 dark:text-blue-400">{{ Auth::user()->name }}</span> 👋
+            </h2>
+
+            {{-- Subtitle --}}
+            <p class="mt-2 text-lg text-gray-700 dark:text-gray-300 mb-4">
+                Welcome to your <b>MyDMW Dashboard</b>
+            </p>
+
+            {{-- Success note --}}
+            <!-- <p class="mt-4 text-sm text-green-700 dark:text-green-400 font-medium bg-green-100 dark:bg-green-800 px-4 py-2 rounded-lg inline-block">
+                ✅ You have successfully logged in!
+            </p> -->
         </div>
     </div>
 
+
     {{-- Right Side Cards (Dynamic Stats) --}}
-    <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-2">
+    <div class="mt-6 grid grid-cols-1 md:grid-cols-4 gap-2">
         {{-- Show this card only for admin, manager, or hr --}}
         @if (auth()->user()->hasRole('admin') || auth()->user()->hasRole('manager') || auth()->user()->hasRole('hr'))
         <div
@@ -23,10 +41,10 @@
             <a href="{{ route('leaves.index', ['view' => 'team']) }}"
                 class="block p-6 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <div class="text-center">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
                         Unapproved Leaves
                     </h3>
-                    <p class="text-xl font-extrabold text-red-600 dark:text-red-400">
+                    <p class="text-2xl font-extrabold text-red-600 dark:text-red-400">
                         {{ $pendingCount }}
                     </p>
                 </div>
@@ -34,28 +52,72 @@
         </div>
         @endif
 
-        {{-- Internal Job Postings Card --}}
         <div
             class="rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
+            <a href="{{ route('leaves.index', ['view' => 'mine']) }}"
+                class="block p-6 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                        My Leave Balance
+                    </h3>
+
+                    @if ($user_leave > 10)
+                    <p class="text-2xl font-extrabold text-green-600 dark:text-green-400 mb-3">
+                        {{ $user_leave }}
+                    </p>
+                    @elseif ($user_leave > 0 && $user_leave <= 10)
+                        <p class="text-2xl font-extrabold text-yellow-500 dark:text-yellow-400 mb-3">
+                        {{ $user_leave }}
+                        </p>
+                        @else
+                        <p class="text-2xl font-extrabold text-red-600 dark:text-red-400 mb-3">
+                            {{ $user_leave }}
+                        </p>
+                        @endif
+
+                        {{-- <span class="mt-1 text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">Days</span> --}}
+                </div>
+            </a>
+        </div>
+
+        {{-- Internal Job Postings Card --}}
+        <div
+            class=" rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
             <a href="{{ route('internal-jobs.index') }}"
                 class="block p-6 hover:bg-gray-50 dark:hover:bg-gray-700">
                 <div class="text-center">
-                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-2">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
                         Internal Job Postings
                     </h3>
-                    <p class="text-xl font-extrabold text-red-600 dark:text-red-400">
+                    <p class="text-2xl font-extrabold text-red-600 dark:text-red-400 mb-3">
                         {{ $ijpCount }}
                     </p>
                 </div>
             </a>
         </div>
+        @hasrole('admin')
+        <div
+            class=" rounded-xl overflow-hidden shadow-sm hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
+            <a
+                class="block p-6 hover:bg-gray-50 dark:hover:bg-gray-700">
+                <div class="text-center">
+                    <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100 mb-3">
+                        Tickets / Feedbacks
+                    </h3>
+                    <p class="text-2xl font-extrabold text-red-600 dark:text-red-400 mb-3">
+                        {{ $tickets }}
+                    </p>
+                </div>
+            </a>
+        </div>
+        @endhasrole
     </div>
 
     {{-- Upcoming Holidays + Circulars --}}
     <div class="mt-6 grid grid-cols-1 md:grid-cols-3 gap-6">
         {{-- Upcoming Holidays --}}
         <div
-            class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
+            class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800" style="height: 200px;">
             <div class="p-6 w-full">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Upcoming Holidays</h3>
@@ -74,8 +136,8 @@
                             </span>
                         </div>
                         <div class="px-6">
-                            <p class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                {{ $holiday->name }}
+                            <p class="text-lg font-medium text-red-900 dark:text-red-100">
+                                {{ ucfirst($holiday->name) }}
                             </p>
                         </div>
                     </div>
@@ -89,7 +151,7 @@
 
         {{-- Upcoming Circulars --}}
         <div
-            class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800">
+            class="rounded-xl overflow-hidden shadow-lg hover:shadow-2xl transition-all duration-300 bg-white dark:bg-gray-800" style="height: 200px" ;>
             <div class="p-6 w-full">
                 <div class="flex justify-between items-center mb-4">
                     <h3 class="text-xl font-semibold text-gray-800 dark:text-gray-100">Upcoming Circulars</h3>
@@ -111,7 +173,7 @@
                         {{-- Details --}}
                         <div class="flex flex-col px-6">
                             <p class="text-lg font-medium text-gray-900 dark:text-gray-100">
-                                {{ $circular->circular_no ?? 'Untitled Circular' }}
+                                {{ ucfirst($circular->circular_name) ?? 'Untitled Circular' }}
                             </p>
                             <button class="mt-1 text-sm text-indigo-600 hover:underline flex items-center gap-1"
                                 data-bs-toggle="modal" data-bs-target="#pdfModal{{ $circular->id }}">

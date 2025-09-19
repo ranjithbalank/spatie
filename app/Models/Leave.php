@@ -34,7 +34,7 @@ class Leave extends Model
     {
         return $this->belongsTo(Employees::class, 'approver_2', "emp_id");
     }
-     public function employees()
+    public function employees()
     {
         return $this->hasOne(Employees::class, 'user_id');
     }
