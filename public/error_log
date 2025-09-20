@@ -1,0 +1,55 @@
+[18-Sep-2025 11:01:28 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 7.4.33. in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php:26
+Stack trace:
+#0 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/autoload.php(22): ComposerAutoloaderInit88970a0117c062eed55fa8728fc43833::getLoader()
+#2 /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php(14): require('/home2/dmwinmno...')
+#3 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php on line 26
+[18-Sep-2025 11:11:08 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 7.4.33. in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php:26
+Stack trace:
+#0 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/autoload.php(22): ComposerAutoloaderInit88970a0117c062eed55fa8728fc43833::getLoader()
+#2 /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php(14): require('/home2/dmwinmno...')
+#3 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php on line 26
+[18-Sep-2025 11:16:38 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 7.4.33. in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php:26
+Stack trace:
+#0 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/autoload.php(22): ComposerAutoloaderInit88970a0117c062eed55fa8728fc43833::getLoader()
+#2 /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php(14): require('/home2/dmwinmno...')
+#3 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php on line 26
+[18-Sep-2025 11:19:21 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 7.4.33. in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php:26
+Stack trace:
+#0 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/autoload.php(22): ComposerAutoloaderInit88970a0117c062eed55fa8728fc43833::getLoader()
+#2 /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php(14): require('/home2/dmwinmno...')
+#3 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php on line 26
+[18-Sep-2025 11:19:57 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 7.4.33. in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php:26
+Stack trace:
+#0 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/autoload.php(22): ComposerAutoloaderInit88970a0117c062eed55fa8728fc43833::getLoader()
+#2 /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php(14): require('/home2/dmwinmno...')
+#3 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php on line 26
+[18-Sep-2025 11:21:06 UTC] PHP Fatal error:  Uncaught RuntimeException: Composer detected issues in your platform: Your Composer dependencies require a PHP version ">= 8.2.0". You are running 8.1.30. in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php:26
+Stack trace:
+#0 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/autoload_real.php(25): require()
+#1 /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/autoload.php(22): ComposerAutoloaderInit88970a0117c062eed55fa8728fc43833::getLoader()
+#2 /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php(14): require('/home2/dmwinmno...')
+#3 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/vendor/composer/platform_check.php on line 26
+[18-Sep-2025 11:30:46 UTC] PHP Warning:  require(/home2/dmwinmno/public_html/mydmw.dmwindia.com/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 14
+[18-Sep-2025 11:30:46 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/dmwinmno/public_html/mydmw.dmwindia.com/public/vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 14
+[18-Sep-2025 11:30:50 UTC] PHP Warning:  require(/home2/dmwinmno/public_html/mydmw.dmwindia.com/public/vendor/autoload.php): Failed to open stream: No such file or directory in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 14
+[18-Sep-2025 11:30:50 UTC] PHP Fatal error:  Uncaught Error: Failed opening required '/home2/dmwinmno/public_html/mydmw.dmwindia.com/public/vendor/autoload.php' (include_path='.:/opt/cpanel/ea-php83/root/usr/share/pear') in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php:14
+Stack trace:
+#0 {main}
+  thrown in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 14
+[18-Sep-2025 11:33:03 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 20
+[18-Sep-2025 11:33:18 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 20
+[18-Sep-2025 11:33:19 UTC] PHP Parse error:  syntax error, unexpected token "<", expecting end of file in /home2/dmwinmno/public_html/mydmw.dmwindia.com/public/index.php on line 20

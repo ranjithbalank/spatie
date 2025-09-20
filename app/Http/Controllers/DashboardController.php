@@ -15,7 +15,8 @@ class DashboardController extends Controller
     {
         $user = Auth::user();
         $view = $request->get('view', 'mine');
-
+        $user_leaves = Auth::user()->leave_balance;
+        // dd($user_leaves);
         // Pending count based on role
         $pendingCount = 0;
 
@@ -119,14 +120,18 @@ class DashboardController extends Controller
         $circular = DB::table("circulars")
             ->get();
 
+        $tickets = DB::table("feedback")->count();
+
         return view('dashboard', [
             'leaves' => $myLeaves,
+            'user_leave' => $user_leaves,
             'user' => $user,
             'view' => 'mine',
             'pendingCount' => $pendingCount,
             'ijpCount' => $ijpCount,
             'holidays' => $holidays,
             'circulars' => $circular,
+            "tickets" => $tickets
             // 'employeesCount' => $employeesCount,
             // 'activeEmployeesCount' => $activeEmployeesCount,
         ]);

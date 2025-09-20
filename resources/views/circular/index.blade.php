@@ -46,8 +46,9 @@
                 {{-- Action Buttons --}}
                 <div class="d-flex justify-content-start mb-3">
                     @hasanyrole(['hr', 'admin'])
-                    <a href="{{ route('circulars.create') }}" class="btn btn-success shadow-sm">
-                        <i class="bi bi-person-plus"> Create Circular </i>
+                    <a href="{{ route('circulars.create') }}"
+                        class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
+                        + Create Circulars
                     </a>
                     @endhasanyrole
                 </div>
@@ -79,12 +80,39 @@
                             <td>{{ $circular->circular_name }}</td>
 
                             {{-- Actions Column --}}
-                            <td class="text-center">
-                                <button class="btn btn-primary btn-sm" data-bs-toggle="modal"
-                                    data-bs-target="#pdfModal{{ $circular->id }}">
-                                    <i class="bi bi-eye"></i> View
-                                </button>
-                            </td>
+                          <td class="text-center">
+    <a href="#fileModal{{ $circular->id }}" data-bs-toggle="modal" data-bs-target="#fileModal{{ $circular->id }}">
+        View
+    </a>
+
+    <!-- Modal for this specific file -->
+    <div class="modal fade" id="fileModal{{ $circular->id }}" tabindex="-1" aria-labelledby="fileModalLabel{{ $circular->id }}" aria-hidden="true">
+        <div class="modal-dialog modal-lg"> <!-- Larger modal size -->
+            <div class="modal-content">
+                <div class="modal-header">
+                    <!-- Dynamic Title -->
+                    <h5 class="modal-title" id="fileModalLabel{{ $circular->id }}">
+                        {{ $circular->id }} / {{ $circular->circular_name ?? 'Untitled File' }} <!-- Dynamic or default title -->
+                    </h5>
+
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <!-- Disable right-click on the iframe for download prevention -->
+                    <iframe src="https://docs.google.com/viewer?embedded=true&url={{ urlencode(asset('storage/' . $circular->file_path)) }}" width="100%" height="600px" frameborder="0" oncontextmenu="return false;"></iframe>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                </div>
+            </div>
+        </div>
+    </div>
+</td>
+
+
+
+
+                            
                         </tr>
                         @endforeach
                     </tbody>
@@ -96,51 +124,25 @@
             PDF Viewer Modals
             Each Circular opens in Bootstrap Modal with PDF.js viewer
         ============================ --}}
-        @foreach ($circulars as $circular)
-        <div class="modal fade" id="pdfModal{{ $circular->id }}" tabindex="-1"
-            aria-labelledby="pdfModalLabel{{ $circular->id }}" aria-hidden="true">
-            <div class="modal-dialog modal-xl modal-dialog-centered">
-                <div class="modal-content">
-                    <div class="modal-header">
-                        <h5 class="modal-title">Circular - {{ $circular->circular_no }}</h5>
-                        <button type="button" class="btn-close" data-bs-dismiss="modal"
-                            aria-label="Close"></button>
-                    </div>
+     
 
-                    {{-- PDF Viewer using PDF.js --}}
-                    <div class="modal-body" style="height: 80vh;">
-                        <iframe
-                            src="{{ asset('pdfjs/web/viewer.html') }}?file={{ urlencode(asset('storage/' . $circular->file_path)) }}#toolbar=0"
-                            width="100%" height="100%" style="border: none;">
-                        </iframe>
-                    </div>
-
-                    {{-- Optional Footer (Download button if needed in future) --}}
-                    {{--
-                        <div class="modal-footer">
-                            <a href="{{ asset('storage/' . $circular->file_path) }}" class="btn btn-success" target="_blank">
-                    <i class="bi bi-download"></i> Download PDF
-                    </a>
-                </div>
-                --}}
+        <div
             </div>
-        </div>
-        </div>
-        @endforeach
 
-        {{-- Page Scripts --}}
-        @section('scripts')
-        {{-- DataTables JS --}}
-        <script src="https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js"></script>
-        <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
-        <script>
-            $(document).ready(function() {
-                $('#circularsTable').DataTable({
-                    "order": [], // disable initial ordering
-                    "pageLength": 10 // show 10 rows per page
+
+            {{-- Page Scripts --}}
+            @section('scripts')
+            {{-- DataTables JS --}}
+            <script src="https://cdn.datatables.net/2.3.2/js/jquery.dataTables.min.js"></script>
+            <script src="https://cdn.datatables.net/2.3.2/js/dataTables.bootstrap5.min.js"></script>
+            <script>
+                $(document).ready(function() {
+                    $('#circularsTable').DataTable({
+                        "order": [], // disable initial ordering
+                        "pageLength": 10 // show 10 rows per page
+                    });
                 });
-            });
-        </script>
-        @endsection
+            </script>
+            @endsection
     </x-slot>
 </x-app-layout>

@@ -26,8 +26,8 @@ class LeavesExport implements FromCollection, WithHeadings
                     'Days' => $leave->leave_days,
                     'Status' => strtoupper($leave->status),
                     'Applied On' => $leave->created_at->format('d-m-Y H:i'),
-                    "Approver_1" => optional($leave->approver1)->name,
-                    "Approver_2" => optional($leave->approver2)->name,
+                    "Approver_1" => optional($leave->approver1)->emp_name,
+                    "Approver_2" => optional($leave->approver2)->emp_name,
                 ];
             });
     }

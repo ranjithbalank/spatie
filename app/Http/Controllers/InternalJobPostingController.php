@@ -16,7 +16,7 @@ use Illuminate\Support\Facades\Auth;
 use Maatwebsite\Excel\Facades\Excel;
 use App\Models\InternalJobApplications;
 use App\Notifications\NewJobApplication;
-use App\Models\InternalJobPostings; // ✅ correct import
+use App\Models\InternalJobpostings; // ✅ correct import
 
 class InternalJobPostingController extends Controller // ✅ correct class name
 {
@@ -27,7 +27,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
     {
         $user = Auth::user();
         // Check each job's end date and set a new 'status' attribute
-        $jobs = InternalJobPostings::orderBy('passing_date', 'desc')->get();
+        $jobs = InternalJobpostings::orderBy('passing_date', 'desc')->get();
 
         $today = now()->format('Y-m-d');
         foreach ($jobs as $job) {
@@ -95,7 +95,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
                 ->with('error', 'You do not have permission');
         }
 
-        $jobId = InternalJobPostings::max('id') + 1;
+        $jobId = InternalJobpostings::max('id') + 1;
 
         return view('internal_jobs.create', compact('jobId'));
     }
@@ -119,7 +119,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
             'status' => 'required|string|in:active,inactive',
         ]);
 
-        $job = InternalJobPostings::create([
+        $job = InternalJobpostings::create([
             'job_title' => $request->job_title,
             'job_description' => $request->job_description,
             'qualifications' => $request->qualification,
@@ -143,7 +143,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
 
     public function show(string $id)
     {
-        $jobs = InternalJobPostings::find($id);
+        $jobs = InternalJobpostings::find($id);
         $applications = InternalJobApplications::where('employee_id', Auth::id())->pluck('job_id')->toArray();
         return view('internal_jobs.show', compact('jobs', 'applications'));
     }
@@ -155,7 +155,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
                 ->route('internal-jobs.index')
                 ->with('error', 'You do not have permission');
         }
-        $jobs = InternalJobPostings::find($id);
+        $jobs = InternalJobpostings::find($id);
         return view('internal_jobs.edit', compact('jobs'));
         //
     }
@@ -253,7 +253,7 @@ class InternalJobPostingController extends Controller // ✅ correct class name
         $jobId = $request->query('job_id');
 
         // Fetch the job details
-        $job = InternalJobPostings::findOrFail($jobId);
+        $job = InternalJobpostings::findOrFail($jobId);
 
         // Create a nice filename like "Software_Engineer_IJP.xlsx"
         $filename = str_replace(' ', '_', $job->job_title) . '_IJP.xlsx';

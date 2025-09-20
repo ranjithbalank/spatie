@@ -16,8 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
             'role' => \Spatie\Permission\Middleware\RoleMiddleware::class,
             'permission' => \Spatie\Permission\Middleware\PermissionMiddleware::class,
             'role_or_permission' => \Spatie\Permission\Middleware\RoleOrPermissionMiddleware::class,
-            'menu'=>App\http\Middleware\CheckMenuPermission::class,
-            'check.status' => App\http\Middleware\CheckUserStatus::class,
+            'menu'=>App\Http\Middleware\CheckMenuPermission::class,
+            'check.status' => App\Http\Middleware\CheckUserStatus::class,
         ]);
     })
     ->withMiddleware(function (Middleware $middleware): void {
