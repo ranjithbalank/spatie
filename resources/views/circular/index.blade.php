@@ -13,7 +13,7 @@
     <x-slot name="header">
         <div class="flex justify-between items-center w-full mb-4">
             <h2 class="font-semibold text-xl text-black-800 leading-tight">
-                {{ __('Circulars') }}
+                {{ __('Circulars / Policies') }}
 
                 {{-- Info Icon (Linked to Google Drive for Reference/Help Docs) --}}
                 <a href="https://drive.google.com/file/d/1aVJ01FG3wVKQd1iK8CjqvJds_AWzuJgr/view?usp=sharing"
@@ -48,7 +48,8 @@
                     @hasanyrole(['hr', 'admin'])
                     <a href="{{ route('circulars.create') }}"
                         class="px-4 py-2 bg-green-600 text-white rounded-md hover:bg-green-700 transition">
-                        + Create Circulars
+                        <<<<<<< HEAD
+                            + Create Circulars=======+ Create>>>>>>> 9089e013376b67ecd75a2474eddc5f7418cae8e2
                     </a>
                     @endhasanyrole
                 </div>
@@ -80,39 +81,34 @@
                             <td>{{ $circular->circular_name }}</td>
 
                             {{-- Actions Column --}}
-                          <td class="text-center">
-    <a href="#fileModal{{ $circular->id }}" data-bs-toggle="modal" data-bs-target="#fileModal{{ $circular->id }}">
-        View
-    </a>
+                            <td class="text-center">
+                                <a href="#fileModal{{ $circular->id }}" data-bs-toggle="modal" data-bs-target="#fileModal{{ $circular->id }}">
+                                    View
+                                </a>
 
-    <!-- Modal for this specific file -->
-    <div class="modal fade" id="fileModal{{ $circular->id }}" tabindex="-1" aria-labelledby="fileModalLabel{{ $circular->id }}" aria-hidden="true">
-        <div class="modal-dialog modal-lg"> <!-- Larger modal size -->
-            <div class="modal-content">
-                <div class="modal-header">
-                    <!-- Dynamic Title -->
-                    <h5 class="modal-title" id="fileModalLabel{{ $circular->id }}">
-                        {{ $circular->id }} / {{ $circular->circular_name ?? 'Untitled File' }} <!-- Dynamic or default title -->
-                    </h5>
+                                <!-- Modal for this specific file -->
+                                <div class="modal fade" id="fileModal{{ $circular->id }}" tabindex="-1" aria-labelledby="fileModalLabel{{ $circular->id }}" aria-hidden="true">
+                                    <div class="modal-dialog modal-lg"> <!-- Larger modal size -->
+                                        <div class="modal-content">
+                                            <div class="modal-header">
+                                                <!-- Dynamic Title -->
+                                                <h5 class="modal-title" id="fileModalLabel{{ $circular->id }}">
+                                                    {{ $circular->id }} / {{ $circular->circular_name ?? 'Untitled File' }} <!-- Dynamic or default title -->
+                                                </h5>
 
-                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
-                </div>
-                <div class="modal-body">
-                    <!-- Disable right-click on the iframe for download prevention -->
-                    <iframe src="https://docs.google.com/viewer?embedded=true&url={{ urlencode(asset('storage/' . $circular->file_path)) }}" width="100%" height="600px" frameborder="0" oncontextmenu="return false;"></iframe>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
-                </div>
-            </div>
-        </div>
-    </div>
-</td>
-
-
-
-
-                            
+                                                <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                            </div>
+                                            <div class="modal-body">
+                                                <!-- Disable right-click on the iframe for download prevention -->
+                                                <iframe src="https://docs.google.com/viewer?embedded=true&url={{ urlencode(asset('storage/' . $circular->file_path)) }}" width="100%" height="600px" frameborder="0" oncontextmenu="return false;"></iframe>
+                                            </div>
+                                            <div class="modal-footer">
+                                                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </div>
+                            </td>
                         </tr>
                         @endforeach
                     </tbody>
@@ -124,7 +120,7 @@
             PDF Viewer Modals
             Each Circular opens in Bootstrap Modal with PDF.js viewer
         ============================ --}}
-     
+
 
         <div
             </div>

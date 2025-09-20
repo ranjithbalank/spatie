@@ -1,5 +1,7 @@
 <?php
+
 namespace App\Imports;
+
 use App\Models\FinalJobStatus;
 use Illuminate\Support\Facades\Log;
 use App\Models\InternalJobApplications;
@@ -9,7 +11,7 @@ use Maatwebsite\Excel\Concerns\WithHeadingRow;
 
 class FinalStatusImport implements ToModel, WithHeadingRow
 {
-        protected $warnings = [];
+    protected $warnings = [];
 
     public function model(array $row)
     {
@@ -27,7 +29,7 @@ class FinalStatusImport implements ToModel, WithHeadingRow
         $employeeId = (int) trim($row['applicant_id']);
         // dd([$ijpId,$employeeId]);
         // ✅ Update internal_job_applications
-        $application = \App\Models\InternalJobApplications::where('job_id', $ijpId)
+        $application = InternalJobapplications::where('job_id', $ijpId)
             ->where('employee_id', $employeeId)
             ->first();
 
@@ -37,11 +39,11 @@ class FinalStatusImport implements ToModel, WithHeadingRow
 
             Log::info("✅ Updated application for job_id=$ijpId, employee_id=$employeeId, status={$application->status}");
         } else {
-                Log::warning("🚫 No match in internal_job_applications for job_id=$ijpId and employee_id=$employeeId");
+            Log::warning("🚫 No match in internal_job_applications for job_id=$ijpId and employee_id=$employeeId");
         }
 
         // ✅ Prevent duplicate entry in final_job_statuses
-        $exists = \App\Models\FinalJobStatus::where('ijp_id', $ijpId)
+        $exists = FinalJobStatus::where('ijp_id', $ijpId)
             ->where('applicant_id', $employeeId)
             ->exists();
 
@@ -52,13 +54,13 @@ class FinalStatusImport implements ToModel, WithHeadingRow
         }
 
         // ✅ Create FinalJobStatus record
-        return new \App\Models\FinalJobStatus([
+        return new FinalJobStatus([
             'ijp_id' => $ijpId,
             'release_date' => $this->transformDate($row['release_date']),
             'end_date' => $this->transformDate($row['end_date']),
             'unit' => $row['unit'],
             'job_title' => $row['job_title'],
-            'applicant_id'=> $employeeId,
+            'applicant_id' => $employeeId,
             'applicant' => $row['applicant'],
             'email' => $row['email'],
             'status' => $row['interview_result'],
@@ -89,7 +91,7 @@ class FinalStatusImport implements ToModel, WithHeadingRow
         return \Carbon\Carbon::parse($date);
     }
 
-     public function getWarnings()
+    public function getWarnings()
     {
         return $this->warnings;
     }

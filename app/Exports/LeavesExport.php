@@ -9,14 +9,14 @@ use Maatwebsite\Excel\Concerns\WithHeadings;
 class LeavesExport implements FromCollection, WithHeadings
 {
     /**
-    * @return \Illuminate\Support\Collection
-    */
-   public function collection()
+     * @return \Illuminate\Support\Collection
+     */
+    public function collection()
     {
-        return Leave::with(['user','approver1','approver2'])  // eager load user
+        return Leave::with(['user', 'approver1', 'approver2'])  // eager load user
             ->select('id', 'user_id', 'leave_type', 'from_date', 'to_date', 'leave_days', 'status', 'created_at', 'approver_1', 'approver_2')
             ->get()
-            ->map(function($leave) {
+            ->map(function ($leave) {
                 return [
                     'ID' => $leave->id,
                     'Employee' => optional($leave->user)->name,
@@ -34,6 +34,6 @@ class LeavesExport implements FromCollection, WithHeadings
 
     public function headings(): array
     {
-        return ['ID', 'Employee', 'Leave Type', 'From Date', 'To Date', 'Days', 'Status', 'Applied On','Approver_1','Approver_2'];
+        return ['ID', 'Employee', 'Leave Type', 'From Date', 'To Date', 'Days', 'Status', 'Applied On', 'Approver_1', 'Approver_2'];
     }
 }
